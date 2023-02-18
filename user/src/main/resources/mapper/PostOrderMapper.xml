@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.huel.user.mapper.PostOrderMapper">
+    
+    <resultMap type="cn.edu.huel.user.domain.PostOrder" id="PostOrderResult">
+        <result property="id"    column="id"    />
+        <result property="customerId"    column="customer_id"    />
+        <result property="pay"    column="pay"    />
+        <result property="discount"    column="discount"    />
+        <result property="useDiscount"    column="use_discount"    />
+        <result property="orderTime"    column="order_time"    />
+        <result property="remark"    column="remark"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="goodsType"    column="goods_type"    />
+        <result property="employeeName"    column="employee_name"    />
+    </resultMap>
+
+    <sql id="selectPostOrderVo">
+        select id, customer_id, pay, discount, use_discount, order_time, remark, create_by, goods_type, employee_name from t_post_order
+    </sql>
+
+
+</mapper>

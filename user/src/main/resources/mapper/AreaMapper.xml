@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.huel.user.mapper.AreaMapper">
+
+    <resultMap type="cn.edu.huel.user.domain.Area" id="AreaResult">
+        <result property="id" column="id"/>
+        <result property="pid" column="pid"/>
+        <result property="shortname" column="shortname"/>
+        <result property="name" column="name"/>
+        <result property="mergerName" column="merger_name"/>
+        <result property="level" column="level"/>
+        <result property="pinyin" column="pinyin"/>
+        <result property="code" column="code"/>
+        <result property="zipCode" column="zip_code"/>
+        <result property="first" column="first"/>
+        <result property="lng" column="lng"/>
+        <result property="lat" column="lat"/>
+    </resultMap>
+
+    <sql id="selectAreaVo">
+        select id,
+               pid,
+               shortname,
+               name,
+               merger_name,
+               level,
+               pinyin,
+               code,
+               zip_code,
+               first,
+               lng,
+               lat
+        from t_area
+    </sql>
+
+
+</mapper>
