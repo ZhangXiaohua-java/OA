@@ -1,6 +1,7 @@
 -- ----------------------------
 -- 1.顾客个人信息表
 -- ----------------------------
+drop table if exists t_customer;
 create table t_customer(
 
 id char(19) primary key comment '使用雪花id作为主键',
@@ -30,23 +31,25 @@ level char(1) default 0 comment '会员等级,0-9,后面再处理'
 -- ----------------------------
 -- 2.顾客积分表
 -- ----------------------------
+drop table if exists t_integral;
 create table t_integral(
 
 id char(19) primary key comment '雪花id做主键',
 
 customer_id char(19) not null comment '顾客id',
 
-current_integral bigint(10) default 0 '本次消费后的积分',
+current_integral bigint(10) default 0 comment '本次消费后的积分',
 
-last_integral bigint(10) default 0 '本次消费前的积分',
+last_integral bigint(10) default 0 comment '本次消费前的积分',
 
-order_id not null comment '对应的订单号id'
+order_id char(19) not null comment '对应的订单号id'
 
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 comment '顾客积分表';
 
 -- ----------------------------
 -- 3.顾客收货地址列表
 -- ----------------------------
+drop table if exists t_post_address;
 create table t_post_address(
 
 id char(21) primary key comment '使用nanoid作为主键',
@@ -65,6 +68,7 @@ phone char(11) not null  comment '收货人手机号'
 -- ----------------------------
 -- 4.全国地理位置信息表
 -- ----------------------------
+drop table if exists t_area;
 create table t_area (
   `id` int(11) NOT NULL AUTO_INCREMENT COMMENT 'ID',
   `pid` int(11) DEFAULT NULL COMMENT '父id',
@@ -85,6 +89,7 @@ create table t_area (
 -- ----------------------------
 -- 5.邮寄货品历史表
 -- ----------------------------
+drop table if exists t_post_history;
 create table t_post_history(
 id char(19) primary key not null comment '使用雪花id',
 
@@ -102,16 +107,17 @@ update_time datetime not null comment '本次记录的更新时间,只保留三�
 -- ----------------------------
 -- 6.订单表
 -- ----------------------------
+drop table if exists t_post_order;
 create table t_post_order(
 id char(19) primary key comment '雪花算法生成id',
 
-customer_id not null comment '顾客id',
+customer_id char(19) not null comment '顾客id',
 
 pay double(9,3) not null comment '支付金额',
 
 discount double(9,3) default 0 comment '积分抵扣金额,可以选择是否使用',
 
-use_discount char(1) default 0 comment '本次支付是否使用了积分,0未使用,1使用'
+use_discount char(1) default 0 comment '本次支付是否使用了积分,0未使用,1使用',
 
 order_time datetime not null comment '支付时间,下单即支付',
 
@@ -129,6 +135,7 @@ employee_name varchar(30) not null comment '创建订单的员工姓名,冗余�
 -- ----------------------------
 -- 7.运输历史表
 -- ----------------------------
+drop table if exists t_transport;
 create table t_transport(
 
 id char(19) primary key comment '雪花id',
@@ -154,6 +161,7 @@ remark varchar(255) comment '备注信息'
 -- ----------------------------
 -- 8.赔付信息表
 -- ----------------------------
+drop table if exists t_compensate;
 create table t_compensate (
 
 id char(21) primary key comment '使用nanoid作为主键',
@@ -180,6 +188,7 @@ responsibile_employee bigint(20) not null comment '责任人id'
 -- ----------------------------
 -- 9.部门表
 -- ----------------------------
+drop table if exists sys_dept;
 create table sys_dept (
   dept_id           bigint(20)      not null auto_increment    comment '部门id',
   parent_id         bigint(20)      default 0                  comment '父部门id',
@@ -202,6 +211,7 @@ create table sys_dept (
 -- ----------------------------
 -- 10.员工信息表
 -- ----------------------------
+drop table if exists sys_user;
 drop table if exists sys_user;
 create table sys_user (
   user_id           bigint(20)      not null auto_increment    comment '用户ID',
@@ -251,6 +261,7 @@ create table sys_post
 -- ----------------------------
 -- 12.用户与岗位关联表  用户1-N岗位
 -- ----------------------------
+drop table if exists sys_user_post;
 create table sys_user_post
 (
   user_id   bigint(20) not null comment '用户ID',
