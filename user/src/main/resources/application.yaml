@@ -9,3 +9,15 @@ spring:
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  data:
+    redis:
+      host: 192.168.123.102
+      port: 6379
+      password: redis
+  main:
+    allow-circular-references: true
+    allow-bean-definition-overriding: true
+
+jwt:
+  token:
+    sign-key: 123456
