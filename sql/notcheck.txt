@@ -268,3 +268,28 @@ create table sys_user_post
   post_id   bigint(20) not null comment '岗位ID',
   primary key (user_id, post_id)
 ) engine=innodb comment = '用户与岗位关联表';
+
+
+-- ----------------------------
+-- 13.营业网点表
+-- ----------------------------
+create table t_outlets (
+
+id int primary key auto_increment comment '自增id即可',
+
+outlets_name varchar(64) not null comment '营业部名字',
+
+position varchar(32) not null comment '网点的经纬度坐标信息',
+
+phone char(13) not null comment '营业厅联系电话',
+
+service_provide varchar(255) not null comment '业务范围,如,发货 快递派送 快递自提 零担派送 零担自提',
+
+detail_address varchar(64) not null comment '详细地址',
+
+post_code char(7) not null comment "所在城市的邮编",
+
+leader_id bigint(20) not null comment "营业部负责人id"
+
+
+)engine innodb DEFAULT CHARSET=utf8mb4 comment '网点信息表';
