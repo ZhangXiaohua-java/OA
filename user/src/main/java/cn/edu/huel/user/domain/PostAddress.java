@@ -47,5 +47,7 @@ public class PostAddress {
 	@Excel(name = "收货人手机号")
 	private String phone;
 
+	/* 详细收货地址 */
+	private String detailAddress;
 
 }

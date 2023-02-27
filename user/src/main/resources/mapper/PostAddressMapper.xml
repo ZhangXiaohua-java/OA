@@ -10,10 +10,11 @@
         <result property="isDefault" column="is_default"/>
         <result property="recevierName" column="recevier_name"/>
         <result property="phone" column="phone"/>
+        <result property="detailAddress" column="detail_address"/>
     </resultMap>
 
     <sql id="selectPostAddressVo">
-        select id, post_code, is_default, recevier_name, phone
+        select id, post_code, is_default, recevier_name, phone, detail_address
         from t_post_address
     </sql>
 

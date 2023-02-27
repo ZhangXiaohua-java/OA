@@ -1,15 +1,23 @@
 package cn.edu.huel.user.config;
 
 import cn.edu.huel.user.component.FastJson2RedisSerializer;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.alibaba.fastjson.support.config.FastJsonConfig;
+import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 
 /**
@@ -39,14 +47,41 @@ public class WebContainerConfig {
 		CorsConfiguration corsConfiguration = new CorsConfiguration();
 		corsConfiguration.addAllowedHeader("*");
 		corsConfiguration.addAllowedMethod("*");
-		corsConfiguration.addAllowedOrigin("http://127.0.0.1:8080");
-		corsConfiguration.addAllowedOrigin("http://localhost:8080");
-		corsConfiguration.addAllowedOrigin("http://192.168.123.42:8080");
+		corsConfiguration.addAllowedOrigin("http://127.0.0.1");
+		corsConfiguration.addAllowedOrigin("http://localhost");
+		corsConfiguration.addAllowedOrigin("http://192.168.123.42");
 		corsConfiguration.setAllowCredentials(true);
 		corsConfiguration.setMaxAge(Duration.ofMinutes(30));
 		UrlBasedCorsConfigurationSource configurationSource = new UrlBasedCorsConfigurationSource();
 		configurationSource.registerCorsConfiguration("/**", corsConfiguration);
 		return configurationSource;
+	}
+
+
+	@Bean
+	public MybatisPlusInterceptor pageInterceptor() {
+		MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
+		PaginationInnerInterceptor paginationInnerInterceptor = new PaginationInnerInterceptor();
+		paginationInnerInterceptor.setDbType(DbType.MYSQL);
+		mybatisPlusInterceptor.addInnerInterceptor(paginationInnerInterceptor);
+		return mybatisPlusInterceptor;
+	}
+
+
+	@Bean
+	public HttpMessageConverter httpMessageConverter() {
+		FastJsonHttpMessageConverter messageConverter = new FastJsonHttpMessageConverter();
+		FastJsonConfig config = new FastJsonConfig();
+		config.setSerializerFeatures(SerializerFeature.WriteNullBooleanAsFalse,
+				SerializerFeature.WriteNullListAsEmpty,
+				SerializerFeature.WriteDateUseDateFormat,
+				SerializerFeature.NotWriteRootClassName,
+				SerializerFeature.WriteMapNullValue,
+				SerializerFeature.WriteNullStringAsEmpty);
+		config.setDateFormat("yyyy-MM-dd HH:mm:ss");
+		config.setCharset(StandardCharsets.UTF_8);
+		messageConverter.setFastJsonConfig(config);
+		return messageConverter;
 	}
 
 

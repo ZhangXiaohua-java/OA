@@ -70,5 +70,20 @@ public class PostOrder {
 	@Excel(name = "创建订单的员工姓名,冗余信息")
 	private String employeeName;
 
+	/* 始发地,475300,详细地址 */
+	private String origin;
+
+	/* 目的地,475300,详细地址 */
+	private String dest;
+
+	/* 收件人姓名 */
+	private String receiverName;
+
+	/* 收件人手机号 */
+	private String receiverPhone;
+
+	/* 订单状态,具体的表述见OrderStatusEnum */
+	private char status;
+
 
 }

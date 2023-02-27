@@ -1,8 +1,10 @@
 package cn.edu.huel.user.vo;
 
 import cn.edu.huel.user.base.standard.CreateOrder;
+import cn.edu.huel.user.base.validator.PayTypeCheck;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import org.hibernate.validator.constraints.Length;
 
 import java.util.Date;
 
@@ -11,7 +13,7 @@ import java.util.Date;
  * @date 2023-2-23
  */
 @Data
-public class OderVO {
+public class OrderVO {
 
 
 	@NotBlank(message = "寄件人姓名不可为空", groups = {CreateOrder.class})
@@ -62,7 +64,7 @@ public class OderVO {
 
 	/* 支付方式 */
 	@NotNull(message = "支付方式不可为空", groups = {CreateOrder.class})
-	@Pattern(regexp = "[1-5]", message = "支付方式不支持", groups = {CreateOrder.class})
+	@PayTypeCheck(message = "支付方式不支持", groups = {CreateOrder.class})
 	private Integer payType;
 
 	/* 预约的上门揽件时间 */
@@ -70,11 +72,28 @@ public class OderVO {
 	@Future(message = "无效的上门时间信息", groups = {CreateOrder.class})
 	private Date appointmentTime;
 
+	/* 邮寄地址的邮编 */
+	@Length(max = 6, min = 6, message = "非法的寄件地址", groups = {CreateOrder.class})
+	@Pattern(regexp = "\\d{6}", message = "非法的寄件地址", groups = {CreateOrder.class})
+	private String posterZipCode;
+
+	/* 收件地址的邮编 */
+	@Length(max = 6, min = 6, message = "非法的收件地址", groups = {CreateOrder.class})
+	@Pattern(regexp = "\\d{6}", message = "非法的收件地址", groups = {CreateOrder.class})
+	private String receiveZipCode;
+
+
 	/* 签收口令 */
 	private String token;
 
 	/* 订单备注信息 */
 	private String remark;
+
+
+	private String customerId;
+
+	/* 订单号 */
+	private String orderId;
 
 
 }

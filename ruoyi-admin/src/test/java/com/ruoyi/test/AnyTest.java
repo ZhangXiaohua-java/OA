@@ -1,15 +1,19 @@
-package cn.edu.huel.test;
+package com.ruoyi.test;
 
 import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
+import com.ruoyi.api.ServiceToken;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
+import javax.annotation.Resource;
 
 /**
  * @author 张晓华
  * @date 2023-2-17
  */
-
+@SpringBootTest
 public class AnyTest {
 
 
@@ -34,6 +38,15 @@ public class AnyTest {
 		String nanoId = IdUtil.nanoId();
 		System.out.println(nanoId);
 		System.out.println(nanoId.length());
+	}
+
+
+	@Resource
+	private ServiceToken serviceToken;
+
+	@Test
+	public void getToken() {
+		serviceToken.test();
 	}
 
 }

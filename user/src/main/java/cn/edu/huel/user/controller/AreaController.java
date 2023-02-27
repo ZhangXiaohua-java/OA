@@ -3,17 +3,16 @@ package cn.edu.huel.user.controller;
 import cn.edu.huel.security.vo.Result;
 import cn.edu.huel.user.domain.Area;
 import cn.edu.huel.user.service.IAreaService;
+import cn.edu.huel.user.vo.AreaVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ruoyi.common.core.controller.BaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 全国地理位置信息Controller
@@ -24,6 +23,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/position")
 public class AreaController extends BaseController {
+
 	@Autowired
 	private IAreaService areaService;
 
@@ -44,6 +44,35 @@ public class AreaController extends BaseController {
 		List<Area> areas = areaService.fuzzySearchAreas(keyword);
 		if (!CollectionUtils.isEmpty(areas)) {
 			return Result.ok().put("areas", areas);
+		} else {
+			return Result.error("no data");
+		}
+	}
+
+	@GetMapping("/root")
+	public Result rootAreas() {
+		List<Area> areas = areaService.queryRootAreas();
+		List<AreaVo> rootAreas = areas.stream()
+				.map(e -> new AreaVo(e.getId(), e.getShortname()))
+				.collect(Collectors.toList());
+		return Result.ok().put("data", rootAreas);
+	}
+
+
+	@GetMapping("/tree")
+	public Result treeAreas() {
+		List<AreaVo> areas = areaService.queryAreas();
+		return Result.ok().put("data", areas);
+	}
+
+	@GetMapping("/{pid}")
+	public Result listChildrenArea(@PathVariable Long pid) {
+		List<Area> areas = areaService.queryAreasByParentId(pid);
+		if (!areas.isEmpty()) {
+			List<AreaVo> vos = areas.stream()
+					.map(e -> new AreaVo(e.getId(), e.getShortname()))
+					.collect(Collectors.toList());
+			return Result.ok().put("data", vos);
 		} else {
 			return Result.error("no data");
 		}

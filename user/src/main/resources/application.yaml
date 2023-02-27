@@ -9,6 +9,20 @@ spring:
     password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
 
+  rabbitmq:
+    username: guest
+    password: rabbit
+    host: 192.168.123.102
+    port: 5672
+#    listener:
+#      simple:
+#        acknowledge-mode: manual
+#      direct:
+#        acknowledge-mode: manual
+    publisher-returns: true
+    publisher-confirm-type: correlated
+
+
   data:
     redis:
       host: 192.168.123.102
@@ -21,3 +35,8 @@ spring:
 jwt:
   token:
     sign-key: 123456
+
+
+mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

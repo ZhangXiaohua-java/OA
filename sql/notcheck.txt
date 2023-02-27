@@ -60,7 +60,9 @@ is_default char(1) comment '是否是默认收货地址',
 
 recevier_name varchar(128) not null comment '收货人姓名',
 
-phone char(11) not null  comment '收货人手机号'
+phone char(11) not null  comment '收货人手机号',
+
+detail_address varchar(64) not null comment '详细收货地址'
 
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 comment '顾客收货地址列表';
 
@@ -123,11 +125,21 @@ order_time datetime not null comment '支付时间,下单即支付',
 
 remark varchar(255) comment '订单备注信息',
 
-create_by bigint(20) not null comment '创建订单的员工id',
+create_by bigint(20) not null comment '确认订单的员工id',
 
 goods_type int not null comment '运输商品的类型,后续会设计出一个字典表出来',
 
-employee_name varchar(30) not null comment '创建订单的员工姓名,冗余信息'
+employee_name varchar(30) not null comment '确认订单的员工姓名,冗余信息',
+
+origin varchar(255) not null comment '始发地,如475300,xxx街道xx办事处',
+
+dest varchar(255) not null comment '目的地,如475300,xxx街道xxx小区xxx号楼',
+
+receiver_name varchar(64) not null comment '收件人姓名',
+
+receiver_phone char(11) not null comment '收件人手机号',
+
+status char(1) not null comment '订单状态,枚举值1-9,代表订单的不同状态'
 
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 comment '订单表';
 
