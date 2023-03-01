@@ -43,10 +43,11 @@ public class SecurityConfig {
 												   AccessDeniedHandler accessDeniedHandler,
 												   CorsConfigurationSource corsConfigurationSource,
 												   JwtTokenAuthFilter jwtTokenAuthFilter) throws Exception {
+
 		return httpSecurity.csrf()
 				.disable()
 				.authorizeHttpRequests()
-				.requestMatchers("/user/login", "/token/check")
+				.requestMatchers("/user/login", "/token/check", "/ali/**")
 				.permitAll()
 				.and()
 				.authorizeHttpRequests()

@@ -86,4 +86,8 @@ public class PostOrder {
 	private char status;
 
 
+	/* 订单的创建者,信息有点多余了 */
+	private Long createBy;
+
+
 }

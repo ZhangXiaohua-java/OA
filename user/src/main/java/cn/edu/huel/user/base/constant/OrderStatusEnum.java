@@ -43,5 +43,34 @@ public enum OrderStatusEnum {
 		return status;
 	}
 
+	public static OrderStatusEnum getInstanceByCode(char code) {
+		switch (code) {
+			case '1':
+				return NEW;
+			case '2':
+				return CONFIRMED;
+			case '3':
+				return CREATED;
+			case '4':
+				return PAYED;
+			case '5':
+				return POSTING;
+			case '6':
+				return DISPATCHING;
+			case '7':
+				return Finished;
+			case '8':
+				return OVER;
+			case '9':
+				return UNKNOWN;
+			default:
+				return null;
+		}
+	}
+
+	public static void main(String[] args) {
+		OrderStatusEnum statusEnum = OrderStatusEnum.getInstanceByCode('1');
+		System.out.println(statusEnum.getStatus());
+	}
 
 }

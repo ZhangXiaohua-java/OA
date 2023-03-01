@@ -3,8 +3,10 @@ package cn.edu.huel.user.service;
 import cn.edu.huel.user.base.constant.OrderStatusEnum;
 import cn.edu.huel.user.domain.PostOrder;
 import cn.edu.huel.user.vo.ConditionVo;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 /**
@@ -52,6 +54,50 @@ public interface IPostOrderService extends IService<PostOrder> {
 	 * @return 更新结果
 	 */
 	boolean batchUpdateOrderStatus(String[] ids, OrderStatusEnum orderStatusEnum);
+
+
+	/**
+	 * @param orderId      订单id
+	 * @param statusEnum   订单状态枚举
+	 * @param employeeInfo 员工信息
+	 * @return 修改订单信息
+	 */
+	boolean updateOrderStatus(String orderId, OrderStatusEnum statusEnum, String employeeInfo);
+
+
+	/**
+	 * 查询所有未支付的订单
+	 *
+	 * @param pageNum  页码
+	 * @param pageSize 每页展示的数据条目数
+	 * @return
+	 */
+	List<PostOrder> queryAllUnpaiedOrder(Integer pageNum, Integer pageSize);
+
+
+	/**
+	 * 查询用户的最近订单
+	 *
+	 * @param page 分页信息
+	 * @return
+	 */
+	List<PostOrder> listRecentOrders(Page<PostOrder> page);
+
+
+	/**
+	 * @param orderId 订单号
+	 * @return 用户单笔订单的金额
+	 */
+	BigDecimal queryBill(String orderId);
+
+
+	/**
+	 * 更新订单状态
+	 * @param orderId 订单id
+	 * @param statusEnum 状态
+	 * @return
+	 */
+	boolean updateOrderStatus(String orderId,OrderStatusEnum statusEnum);
 
 
 }

@@ -11,6 +11,8 @@ import cn.edu.huel.user.service.IPostOrderService;
 import cn.edu.huel.user.vo.ConditionVo;
 import cn.edu.huel.user.vo.OrderInfoVo;
 import cn.edu.huel.user.vo.OrderVO;
+import cn.edu.huel.user.vo.PageVo;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.utils.bean.BeanUtils;
 import jakarta.annotation.Resource;
@@ -18,13 +20,11 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.ObjectUtils;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -98,11 +98,50 @@ public class PostOrderController extends BaseController {
 	}
 
 
-	@PostMapping("/up/status")
-	public Result batchUpdateOrderStatus(@RequestBody String[] ids) {
+	/**
+	 * 批量更新订单的状态
+	 *
+	 * @param ids 订单id
+	 * @return result
+	 */
+	@PostMapping("/up/status/{code}")
+	public Result batchUpdateOrderStatus(@RequestBody String[] ids, @PathVariable char code) {
+		OrderStatusEnum statusEnum = OrderStatusEnum.getInstanceByCode(code);
+		if (Objects.isNull(statusEnum)) {
+			return Result.error("非法操作");
+		}
 		System.out.println(Arrays.toString(ids));
-		boolean flag = orderService.batchUpdateOrderStatus(ids, OrderStatusEnum.CONFIRMED);
-		return Result.ok();
+		boolean flag = orderService.batchUpdateOrderStatus(ids, statusEnum);
+		if (flag) {
+			return Result.ok();
+		} else {
+			return Result.error();
+		}
+	}
+
+
+	@PostMapping("/confirm/collect")
+	public Result confirmCollectOrder(String orderId, char code, String employee) {
+		logger.info("接收到的信息:{},{},{}", orderId, code, employee);
+		OrderStatusEnum statusEnum = OrderStatusEnum.getInstanceByCode(code);
+		if (Objects.isNull(statusEnum)) {
+			return Result.error("非法操作");
+		}
+		// TODO 更新单个订单的状态为已揽件,随后发起支付
+		if (orderService.updateOrderStatus(orderId, statusEnum, employee)) {
+			return Result.ok();
+		} else {
+			return Result.error();
+		}
+	}
+
+
+	@GetMapping("/list/recent")
+	public Result queryRecentOrders(PageVo pageVo) {
+		logger.info("pageVo{}", pageVo);
+		Page<PostOrder> page = new Page<>(pageVo.getPageNum(), pageVo.getPageSize());
+		List<PostOrder> orders = orderService.listRecentOrders(page);
+		return Result.ok().put("data", orders);
 	}
 
 
