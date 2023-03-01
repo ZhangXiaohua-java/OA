@@ -11,4 +11,16 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IIntegralService extends IService<Integral> {
 
+
+	/**
+	 * 增加用户积分
+	 *
+	 * @param orderId 订单号
+	 * @param amount  增加的积分数
+	 * @return
+	 */
+	boolean addIntegral(String orderId, Integer amount);
+
+
+
 }

@@ -1,7 +1,9 @@
 package cn.edu.huel.user.controller;
 
 
+import cn.edu.huel.user.service.IIntegralService;
 import com.ruoyi.common.core.controller.BaseController;
+import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -12,5 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class IntegralController extends BaseController {
+
+
+	@Resource
+	private IIntegralService integralService;
+
+
+
+
 
 }

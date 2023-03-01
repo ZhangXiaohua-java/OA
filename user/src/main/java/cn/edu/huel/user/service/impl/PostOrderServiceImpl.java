@@ -1,10 +1,12 @@
 package cn.edu.huel.user.service.impl;
 
 import cn.edu.huel.user.base.constant.OrderStatusEnum;
+import cn.edu.huel.user.base.utils.PostCostCounter;
 import cn.edu.huel.user.domain.PostOrder;
 import cn.edu.huel.user.mapper.PostOrderMapper;
 import cn.edu.huel.user.service.IAreaService;
 import cn.edu.huel.user.service.IPostOrderService;
+import cn.edu.huel.user.to.OrderTo;
 import cn.edu.huel.user.vo.ConditionVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -19,6 +21,7 @@ import org.springframework.util.ObjectUtils;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -33,6 +36,10 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 
 	@Resource
 	private IAreaService areaService;
+
+
+	@Resource
+	private PostCostCounter postCostCounter;
 
 	/**
 	 * 创建订单信息
@@ -120,13 +127,18 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 	 * @return 修改订单信息
 	 */
 	@Override
-	public boolean updateOrderStatus(String orderId, OrderStatusEnum statusEnum, String employeeInfo) {
+	public boolean updateOrderStatus(OrderTo to, OrderStatusEnum statusEnum) {
+		PostOrder postOrder = this.baseMapper.selectById(to.getOrderId());
 		PostOrder order = new PostOrder();
-		order.setId(orderId);
+		order.setId(to.getOrderId());
 		order.setStatus(statusEnum.getCode());
-		String[] info = employeeInfo.split("\\.");
+		String[] info = to.getEmployee().split("\\.");
 		order.setCreateBy(Long.valueOf(info[0]));
 		order.setEmployeeName(info[1]);
+		order.setWeight(to.getWeight());
+		order.setVolume(to.getVolume());
+		Integer cost = postCostCounter.countCost(to.getWeight(), postOrder.getOrigin().split(",")[0], postOrder.getDest().split(",")[0], to.getVolume());
+		order.setPay(new BigDecimal(cost));
 		return this.baseMapper.updateById(order) == 1;
 	}
 
@@ -206,6 +218,38 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 		order.setId(orderId);
 		order.setStatus(statusEnum.getCode());
 		return this.updateById(order);
+	}
+
+
+	/**
+	 * 根据订单号查询用户id
+	 *
+	 * @param orderId 订单号
+	 * @return
+	 */
+	@Override
+	public String queryCustomerIdByOrderId(String orderId) {
+		LambdaQueryWrapper<PostOrder> query = new LambdaQueryWrapper<>();
+		query.select(PostOrder::getCustomerId);
+		query.eq(PostOrder::getId, orderId);
+		PostOrder order = this.baseMapper.selectOne(query);
+		return Objects.isNull(order) ? null : order.getCustomerId();
+	}
+
+
+	/**
+	 * @param orderId 订单号
+	 * @return 返回计算的运费
+	 */
+	@Override
+	public Integer countPostCost(String orderId) {
+		PostOrder order = this.baseMapper.selectById(orderId);
+		if (Objects.isNull(order)) {
+			return null;
+		}
+		String[] origin = order.getOrigin().split(",");
+		String[] dest = order.getDest().split(",");
+		return postCostCounter.countCost(order.getWeight(), origin[0], dest[0], order.getVolume());
 	}
 
 

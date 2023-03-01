@@ -7,6 +7,7 @@ import cn.edu.huel.user.base.ex.UnTrustedMessageException;
 import cn.edu.huel.user.dto.AliMessage;
 import cn.edu.huel.user.dto.AliPayNotifyMessage;
 import cn.edu.huel.user.dto.MessageDto;
+import cn.edu.huel.user.service.IIntegralService;
 import cn.edu.huel.user.service.IPostOrderService;
 import cn.edu.huel.user.to.TradeTo;
 import com.alibaba.fastjson.JSON;
@@ -54,6 +55,9 @@ public class AlipayController {
 
 	@Resource
 	private IPostOrderService orderService;
+
+	@Resource
+	private IIntegralService integralService;
 
 
 	@GetMapping("/trade/pay")
@@ -132,6 +136,11 @@ public class AlipayController {
 			BigDecimal paied = (BigDecimal) ops.get(RedisConstant.ORDER_PAY_INFO_PREFIX + tradeNo);
 			// TODO 更新订单状态为已支付
 			orderService.updateOrderStatus(tradeNo, OrderStatusEnum.PAYED);
+			// TODO 增加用户积分
+			Integer integralAmount = Integer.parseInt(amount) * 10;
+			if (integralService.addIntegral(tradeNo, integralAmount)) {
+				log.info("订单{}产生了{}积分", tradeNo, integralAmount);
+			}
 		}
 		log.info("转换后的对象信息{}", message);
 		return "success";

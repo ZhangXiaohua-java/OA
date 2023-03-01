@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.huel.user.mapper.BusinessDepartmentMapper">
+
+
+    <resultMap type="cn.edu.huel.user.domain.BusinessDepartment" id="BusinessDepartmentResult">
+        <result property="id" column="id"/>
+        <result property="code" column="code"/>
+        <result property="unifiedCode" column="unified_code"/>
+        <result property="name" column="name"/>
+        <result property="address" column="address"/>
+        <result property="longitude" column="longitude"/>
+        <result property="latitude" column="latitude"/>
+        <result property="provinceCode" column="province_code"/>
+        <result property="provinceName" column="province_name"/>
+        <result property="cityCode" column="city_code"/>
+        <result property="cityName" column="city_name"/>
+        <result property="countyCode" column="county_code"/>
+        <result property="countyName" column="county_name"/>
+        <result property="businessType" column="business_type"/>
+        <result property="contactway" column="contactway"/>
+        <result property="amapLongitude" column="amap_longitude"/>
+        <result property="amapLatitude" column="amap_latitude"/>
+    </resultMap>
+
+    <sql id="selectAreaVo">
+        select id,
+               code,
+               unified_code,
+               name,
+               address,
+               longitude,
+               latitude,
+               province_code,
+               province_name,
+               city_code,
+               city_name,
+               county_code,
+               county_name,
+               business_type,
+               contactway,
+               amap_longitude,
+               amap_latitude
+        from t_business_department
+    </sql>
+
+
+</mapper>

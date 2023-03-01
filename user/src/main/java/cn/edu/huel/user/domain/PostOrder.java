@@ -90,4 +90,12 @@ public class PostOrder {
 	private Long createBy;
 
 
+	/* 物品的重量 */
+	private Integer weight;
+
+
+	/* 物品的体积,用于核算运费 */
+	private Integer volume;
+
+
 }

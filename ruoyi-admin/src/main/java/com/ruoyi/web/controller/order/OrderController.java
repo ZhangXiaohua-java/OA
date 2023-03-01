@@ -1,10 +1,13 @@
 package com.ruoyi.web.controller.order;
 
+import cn.edu.huel.user.to.OrderTo;
 import cn.edu.huel.user.vo.OrderVO;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.web.controller.service.OrderService;
 import com.ruoyi.web.feign.FeignRemoteClient;
+import com.ruoyi.web.vo.OrderVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -109,15 +112,22 @@ public class OrderController {
 	 * 确认揽件
 	 *
 	 * @param orderId 订单id
+	 * @param weight  重量
+	 * @param volume  体积
 	 * @return
 	 */
-	@PutMapping("/confirm/collect")
-	public AjaxResult confirmCollectOrder(@RequestParam String orderId) {
+	@PostMapping("/confirm/collect")
+	public AjaxResult confirmCollectOrder(@RequestBody OrderVo orderVO) {
+		log.info("订单号{}重量为{}KG,体积为{}立方厘米", orderVO.getOrderId(), orderVO.getWeight(), orderVO.getVolume());
 		LoginUser principal = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		log.info("订单{}已经被揽收了", orderId);
-		boolean result = orderService.confirmCollectOrder(orderId, principal.getUserId());
+		log.info("订单{}已经被揽收了", orderVO.getOrderId());
+		boolean result = orderService.confirmCollectOrder(orderVO.getOrderId(), principal.getUserId());
 		CompletableFuture.runAsync(() -> {
-			remoteClient.confirmCollectOrder(orderId, OrderStatus.CREATED, principal.getUserId() + "." + principal.getUser().getUserName());
+			OrderTo to = new OrderTo();
+			BeanUtils.copyProperties(orderVO, to);
+			to.setCode(OrderStatus.CREATED);
+			to.setEmployee(principal.getUserId() + "." + principal.getUser().getUserName());
+			remoteClient.confirmCollectOrder(to);
 		});
 		if (result) {
 			return new AjaxResult(200, "ok");
@@ -125,8 +135,6 @@ public class OrderController {
 			return new AjaxResult(500, "fail");
 		}
 	}
-
-
 
 
 }

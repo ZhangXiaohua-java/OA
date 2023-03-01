@@ -10,11 +10,24 @@
         <result property="currentIntegral" column="current_integral"/>
         <result property="lastIntegral" column="last_integral"/>
         <result property="orderId" column="order_id"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <sql id="selectIntegralVo">
-        select id, customer_id, current_integral, last_integral, order_id
+        select id, customer_id, current_integral, last_integral, order_id, update_time
         from t_integral
     </sql>
+
+    <sql id="baseColumns">
+        select id, customer_id, current_integral, last_integral, order_id, update_time
+    </sql>
+
+    <select id="queryLastIntegral" resultType="cn.edu.huel.user.domain.Integral">
+        <include refid="baseColumns"/>
+        where update_time = (
+        select max(update_time) from t_integral
+        where customer_id = #{customerId}
+        )
+    </select>
 
 </mapper>

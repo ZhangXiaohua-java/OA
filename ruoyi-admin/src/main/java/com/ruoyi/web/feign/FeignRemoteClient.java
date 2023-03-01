@@ -1,6 +1,7 @@
 package com.ruoyi.web.feign;
 
 import cn.edu.huel.user.domain.Outlets;
+import cn.edu.huel.user.to.OrderTo;
 import com.ruoyi.web.to.LoginInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -34,7 +35,7 @@ public interface FeignRemoteClient {
 	 * @return 操作结果
 	 */
 	@PostMapping("/order/confirm/collect")
-	String confirmCollectOrder(@RequestParam("orderId") String orderId, @RequestParam("code") char code, @RequestParam("employee") String employee);
+	String confirmCollectOrder(@RequestBody OrderTo orderTo);
 
 
 	@PostMapping("/sms/order/notify")

@@ -2,6 +2,7 @@ package cn.edu.huel.user.service;
 
 import cn.edu.huel.user.base.constant.OrderStatusEnum;
 import cn.edu.huel.user.domain.PostOrder;
+import cn.edu.huel.user.to.OrderTo;
 import cn.edu.huel.user.vo.ConditionVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -62,7 +63,7 @@ public interface IPostOrderService extends IService<PostOrder> {
 	 * @param employeeInfo 员工信息
 	 * @return 修改订单信息
 	 */
-	boolean updateOrderStatus(String orderId, OrderStatusEnum statusEnum, String employeeInfo);
+	boolean updateOrderStatus(OrderTo to, OrderStatusEnum statusEnum);
 
 
 	/**
@@ -93,11 +94,26 @@ public interface IPostOrderService extends IService<PostOrder> {
 
 	/**
 	 * 更新订单状态
-	 * @param orderId 订单id
+	 *
+	 * @param orderId    订单id
 	 * @param statusEnum 状态
 	 * @return
 	 */
-	boolean updateOrderStatus(String orderId,OrderStatusEnum statusEnum);
+	boolean updateOrderStatus(String orderId, OrderStatusEnum statusEnum);
 
 
+	/**
+	 * 根据订单号查询用户id
+	 *
+	 * @param orderId 订单号
+	 * @return
+	 */
+	String queryCustomerIdByOrderId(String orderId);
+
+
+	/**
+	 * @param orderId 订单号
+	 * @return 返回计算的运费
+	 */
+	Integer countPostCost(String orderId);
 }

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.huel.user.mapper.RegionMapper">
+
+    <resultMap id="BaseResultMap" type="cn.edu.huel.user.domain.Region">
+        <id property="regionId" column="region_id" jdbcType="VARCHAR"/>
+        <result property="regionName" column="region_name" jdbcType="VARCHAR"/>
+        <result property="regionShortName" column="region_short_name" jdbcType="VARCHAR"/>
+        <result property="regionCode" column="region_code" jdbcType="VARCHAR"/>
+        <result property="regionParentId" column="region_parent_id" jdbcType="VARCHAR"/>
+        <result property="regionLevel" column="region_level" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        region_id,region_name,region_short_name,
+        region_code,region_parent_id,region_level
+    </sql>
+</mapper>

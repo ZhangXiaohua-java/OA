@@ -1,6 +1,8 @@
 package cn.edu.huel.user.config;
 
+import cn.edu.huel.user.component.CustomThreadFactory;
 import cn.edu.huel.user.component.FastJson2RedisSerializer;
+import cn.edu.huel.user.component.HttpClient;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
@@ -8,6 +10,7 @@ import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import feign.codec.Decoder;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
@@ -31,6 +34,10 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author 张晓华
@@ -132,6 +139,26 @@ public class WebContainerConfig {
 		restTemplate.getMessageConverters().add(new ExtMappingJackson2HttpMessageConverter());
 		return restTemplate;
 	}
+
+
+	// TODO 将线程池的配置信息抽取成配置对象
+	@Bean
+	public Executor executor(CustomThreadFactory threadFactory) {
+		return new ThreadPoolExecutor(50,
+				100,
+				60,
+				TimeUnit.SECONDS,
+				new ArrayBlockingQueue<>(100),
+				threadFactory,
+				new ThreadPoolExecutor.AbortPolicy()
+		);
+	}
+
+	@Bean
+	public CloseableHttpClient httpClient() {
+		return HttpClient.getHttpClient();
+	}
+
 
 
 }

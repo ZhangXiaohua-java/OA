@@ -305,3 +305,26 @@ leader_id bigint(20) not null comment "营业部负责人id"
 
 
 )engine innodb DEFAULT CHARSET=utf8mb4 comment '网点信息表';
+
+-- ----------------------------
+-- 13.营业部信息,大概率会替换掉上面的t_outlets表
+-- ----------------------------
+CREATE TABLE t_business_department (
+   id int primary key auto_increment,
+  `code` char(11) comment '营业网点编号',
+  `unified_code` char(7) not null comment '网点的唯一识别号',
+  `name` varchar(64) not null comment '网点名',
+  `address` varchar(128) not null comment '详细地址',
+  `longitude` varchar(30) not null comment '精度',
+  `latitude` varchar(30) not null comment '纬度',
+  `province_code` INTEGER not null comment '省份代码',
+  `province_name` varchar(32) not null comment '省份名字',
+  `city_code` INTEGER not null comment '城市代码',
+  `city_name` varchar(32) not null comment '城市名字',
+  `county_code` INTEGER not null comment '区县代码',
+  `county_name` varchar(32) not null comment '区县名字',
+  `business_type` varchar(64) not null comment '业务范围',
+  `contactway` char(13) not null comment '联系电话',
+  `amap_longitude` varchar(30) not null comment '营业部经纬度',
+  `amap_latitude` varchar(30) not null comment '营业部经纬度'
+);

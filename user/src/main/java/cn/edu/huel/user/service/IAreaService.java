@@ -1,6 +1,7 @@
 package cn.edu.huel.user.service;
 
 import cn.edu.huel.user.domain.Area;
+import cn.edu.huel.user.domain.PositionParam;
 import cn.edu.huel.user.vo.AreaVo;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -53,5 +54,13 @@ public interface IAreaService extends IService<Area> {
 	 */
 	String getMergerNameByZipCode(String zipcode);
 
+
+	/**
+	 * 根据邮政编码查询改区域的经纬度坐标
+	 *
+	 * @param zipcode 邮政编码
+	 * @return
+	 */
+	PositionParam queryLngAndLatByZipCode(String zipcode);
 
 }

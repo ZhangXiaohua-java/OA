@@ -1,6 +1,7 @@
 package cn.edu.huel.user.service.impl;
 
 import cn.edu.huel.user.domain.Area;
+import cn.edu.huel.user.domain.PositionParam;
 import cn.edu.huel.user.mapper.AreaMapper;
 import cn.edu.huel.user.service.IAreaService;
 import cn.edu.huel.user.vo.AreaVo;
@@ -98,6 +99,24 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements IA
 				.select(Area::getMergerName);
 		return this.baseMapper.selectOne(query).getMergerName();
 	}
+
+
+	/**
+	 * 根据邮政编码查询改区域的经纬度坐标
+	 *
+	 * @param zipcode 邮政编码
+	 * @return
+	 */
+	@Override
+	public PositionParam queryLngAndLatByZipCode(String zipcode) {
+		LambdaQueryWrapper<Area> query = new LambdaQueryWrapper<>();
+		query.select(Area::getLat, Area::getLng);
+		query.eq(Area::getZipCode, zipcode);
+		Area area = this.baseMapper.selectOne(query);
+		return new PositionParam(Double.parseDouble(area.getLng()), Double.parseDouble(area.getLat()));
+	}
+
+
 
 
 }

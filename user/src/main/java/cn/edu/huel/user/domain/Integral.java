@@ -6,6 +6,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import com.ruoyi.common.annotation.Excel;
 import lombok.Data;
 
+import java.util.Date;
+
 /**
  * 顾客积分对象 t_integral
  *
@@ -46,6 +48,9 @@ public class Integral {
 	 */
 	@Excel(name = "对应的订单号id")
 	private String orderId;
+
+	/* 每次的更新时间 */
+	public Date updateTime;
 
 
 }
