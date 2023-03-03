@@ -69,6 +69,9 @@ public class WebContainerConfig {
 		corsConfiguration.addAllowedOrigin("http://127.0.0.1");
 		corsConfiguration.addAllowedOrigin("http://localhost");
 		corsConfiguration.addAllowedOrigin("http://192.168.123.42");
+		corsConfiguration.addAllowedOrigin("http://192.168.123.42:81");
+		corsConfiguration.addAllowedOrigin("http://127.0.0.1:81");
+		corsConfiguration.addAllowedOrigin("http://localhost:81");
 		corsConfiguration.setAllowCredentials(true);
 		corsConfiguration.setMaxAge(Duration.ofMinutes(30));
 		UrlBasedCorsConfigurationSource configurationSource = new UrlBasedCorsConfigurationSource();

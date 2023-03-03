@@ -1,5 +1,10 @@
 package com.ruoyi;
 
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.ruoyi.web.domain.TransferFactory;
+import com.ruoyi.web.service.TransferFactoryService;
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
@@ -7,16 +12,23 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import javax.annotation.Resource;
+import java.util.List;
+
 /**
  * 启动程序
  *
  * @author ruoyi
  */
+@MapperScan(basePackages = {"com.ruoyi.web.mapper"})
 @EnableScheduling
 @EnableAspectJAutoProxy(exposeProxy = true, proxyTargetClass = true)
 @EnableFeignClients(basePackages = {"com.ruoyi.web.feign"})
 @SpringBootApplication(exclude = {DataSourceAutoConfiguration.class})
-public class RuoYiApplication {
+public class RuoYiApplication implements CommandLineRunner {
+
+	@Resource
+	private TransferFactoryService transferFactoryService;
 
 
 	public static void main(String[] args) {
@@ -32,6 +44,16 @@ public class RuoYiApplication {
 				" |  | \\ `'   /|   `-'  /           \n" +
 				" |  |  \\    /  \\      /           \n" +
 				" ''-'   `'-'    `-..-'              ");
+	}
+
+
+	@Override
+	public void run(String... args) throws Exception {
+		LambdaUpdateWrapper<TransferFactory> query = new LambdaUpdateWrapper<>();
+		query.eq(TransferFactory::getId, 1L);
+		List<TransferFactory> list = transferFactoryService.list(query);
+		System.out.println("-------------------");
+		System.out.println(list);
 	}
 
 

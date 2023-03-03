@@ -9,15 +9,20 @@ import lombok.Data;
 @Data
 public class OrderDTO {
 
+	/* 系统生成的订单号 */
 	private String orderID;
 
-	private String zipCode;
+	/* 订单的城市代码 */
+	private String countCode;
 
+	/* 营业网点id */
+	private String unifiedCode;
+
+	/*客户的详细地址*/
 	private String detailAddress;
 
+	/*客户的联系方式*/
 	private String phone;
-
-
 
 
 }

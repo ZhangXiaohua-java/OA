@@ -63,4 +63,11 @@ public interface IAreaService extends IService<Area> {
 	 */
 	PositionParam queryLngAndLatByZipCode(String zipcode);
 
+	/**
+	 * @param id 区域
+	 * @return 根据区域id查询该区域的所有子项目
+	 */
+	List<Area> queryAllChildAreas(Long id);
+
+
 }

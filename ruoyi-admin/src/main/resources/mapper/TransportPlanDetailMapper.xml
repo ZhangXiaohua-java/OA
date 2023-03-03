@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.TransportPlanDetailMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruoyi.web.domain.TransportPlanDetail">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="transportType" column="transport_type" jdbcType="CHAR"/>
+        <result property="planCost" column="plan_cost" jdbcType="BIGINT"/>
+        <result property="cost" column="cost" jdbcType="BIGINT"/>
+        <result property="chargePerson" column="charge_person" jdbcType="BIGINT"/>
+        <result property="expectCapacity" column="expect_capacity" jdbcType="BIGINT"/>
+        <result property="expectWeight" column="expect_weight" jdbcType="BIGINT"/>
+        <result property="capacity" column="capacity" jdbcType="BIGINT"/>
+        <result property="weight" column="weight" jdbcType="BIGINT"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,transport_type,plan_cost,
+        cost,charge_person,expect_capacity,
+        expect_weight,capacity,weight
+    </sql>
+</mapper>

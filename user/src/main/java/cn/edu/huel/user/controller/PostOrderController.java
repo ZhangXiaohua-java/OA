@@ -10,10 +10,7 @@ import cn.edu.huel.user.message.MessageService;
 import cn.edu.huel.user.service.IAreaService;
 import cn.edu.huel.user.service.IPostOrderService;
 import cn.edu.huel.user.to.OrderTo;
-import cn.edu.huel.user.vo.ConditionVo;
-import cn.edu.huel.user.vo.OrderInfoVo;
-import cn.edu.huel.user.vo.OrderVO;
-import cn.edu.huel.user.vo.PageVo;
+import cn.edu.huel.user.vo.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.controller.BaseController;
 import com.ruoyi.common.utils.bean.BeanUtils;
@@ -158,6 +155,24 @@ public class PostOrderController extends BaseController {
 		Integer cost = orderService.countPostCost(orderId);
 		return Result.ok().put("data", cost);
 	}
+
+	@PostMapping("/cost/query/v2")
+	public Result countPostFee(@RequestBody @Validated({FreightVo.CountCostWithOrderId.class}) FreightVo vo) {
+		PostOrder order = orderService.getById(vo.getOrderId());
+		String[] info = order.getOrigin().split(",");
+		String[] info2 = order.getOrigin().split(",");
+		Integer cost = postCostCounter.countCost(vo.getWeight(), info[0], info2[0], vo.getVolume());
+		return Result.ok().put("data", cost);
+	}
+
+
+	@PostMapping("/cost/query/v1")
+	public Result countCost(@RequestBody @Validated({FreightVo.CountCostWithoutOrderId.class}) FreightVo vo) {
+		Integer cost = postCostCounter.countCost(vo.getWeight(), vo.getOrigin(), vo.getDest(), vo.getVolume());
+		return Result.ok().put("data", cost);
+	}
+
+
 
 
 }

@@ -76,6 +76,13 @@ public class OrderVO {
 	private String customerId;
 
 
+	/* 订单号 */
 	private String orderId;
+
+	/* 营业网点唯一识别码 */
+	private String unifiedCode;
+
+	/* 区域代码,用来替换之前的zipcode邮编,使用邮编表示地域过于局限... */
+	private String countyCode;
 
 }

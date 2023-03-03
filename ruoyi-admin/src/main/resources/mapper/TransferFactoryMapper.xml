@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.TransferFactoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruoyi.web.domain.TransferFactory">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="regionCode" column="region_code" jdbcType="CHAR"/>
+        <result property="name" column="name" jdbcType="VARCHAR"/>
+        <result property="level" column="level" jdbcType="CHAR"/>
+        <result property="leaderName" column="leader_name" jdbcType="VARCHAR"/>
+        <result property="position" column="position" jdbcType="VARCHAR"/>
+        <result property="zipcode" column="zipcode" jdbcType="CHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,region_code,name,
+        level,leader_name,position,
+        zipcode
+    </sql>
+
+
+</mapper>

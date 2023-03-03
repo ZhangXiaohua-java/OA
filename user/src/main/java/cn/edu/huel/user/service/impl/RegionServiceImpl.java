@@ -1,13 +1,17 @@
 package cn.edu.huel.user.service.impl;
 
+import cn.edu.huel.user.domain.Area;
 import cn.edu.huel.user.domain.Region;
 import cn.edu.huel.user.mapper.RegionMapper;
+import cn.edu.huel.user.service.IAreaService;
 import cn.edu.huel.user.service.RegionService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author ZhangXiaoHua
@@ -17,6 +21,9 @@ import java.util.List;
 @Service
 public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region> implements RegionService {
 
+
+	@Resource
+	private IAreaService areaService;
 
 	/**
 	 * 加载所有的省份信息
@@ -45,6 +52,30 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region> impleme
 	}
 
 
+	/**
+	 * @param areaPath 查询城市代码
+	 * @return
+	 */
+	@Override
+	public Long queryRegionCode(Long[] areaPath) {
+		List<String> results = this.baseMapper.selectRegionCodeByAreaId(areaPath[2]);
+		//List<Long> codes = results.stream().map(Long::valueOf).collect(Collectors.toList());
+		// 如果查询出的结果多余一个就需要进行再次的过滤
+		if (results.size() > 1) {
+			Area parent = areaService.getById(areaPath[1]);
+			results = results.stream()
+					.filter(e -> {
+						LambdaQueryWrapper<Region> query = new LambdaQueryWrapper<>();
+						query.eq(Region::getRegionCode, e);
+						Region region = this.baseMapper.selectOne(query);
+						LambdaQueryWrapper<Region> wrapper = new LambdaQueryWrapper<>();
+						wrapper.eq(Region::getRegionId, region.getRegionParentId());
+						region = this.baseMapper.selectOne(wrapper);
+						return region.getRegionName().equals(parent.getName());
+					}).collect(Collectors.toList());
+		}
+		return Long.valueOf(results.get(0));
+	}
 
 
 }

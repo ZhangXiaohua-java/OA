@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.huel.user.mapper.ServiceSupportRangeMapper">
+
+    <resultMap id="BaseResultMap" type="cn.edu.huel.user.domain.ServiceSupportRange">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="streetName" column="street_name" jdbcType="VARCHAR"/>
+        <result property="streetCode" column="street_code" jdbcType="CHAR"/>
+        <result property="intoWareHouse" column="into_ware_house" jdbcType="CHAR"/>
+        <result property="townname" column="townName" jdbcType="VARCHAR"/>
+        <result property="countCode" column="count_code" jdbcType="CHAR"/>
+        <result property="countName" column="count_name" jdbcType="VARCHAR"/>
+        <result property="rangeTypeCode" column="range_type_code" jdbcType="CHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,street_name,street_code,
+        into_ware_house,townName,count_code,
+        count_name,range_type_code
+    </sql>
+
+
+</mapper>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.TransportTraceHistoryMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruoyi.web.domain.TransportTraceHistory">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="planId" column="plan_id" jdbcType="INTEGER"/>
+        <result property="transferId" column="transfer_id" jdbcType="INTEGER"/>
+        <result property="reachTime" column="reach_time" jdbcType="TIMESTAMP"/>
+        <result property="leaveTime" column="leave_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,plan_id,transfer_id,
+        reach_time,leave_time
+    </sql>
+</mapper>

@@ -115,4 +115,12 @@ public interface SysDeptMapper
      * @return 结果
      */
     public int deleteDeptById(Long deptId);
+
+    /**
+     * @param countCode   区县代码
+     * @param unifiedCode 部门唯一识别号
+     * @return 查询营业部信息
+     */
+    SysDept selectDeptByUnifiedCode(@Param("countCode") String countCode, @Param("unifiedCode") String unifiedCode);
+
 }

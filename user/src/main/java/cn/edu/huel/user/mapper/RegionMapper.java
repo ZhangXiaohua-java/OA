@@ -2,6 +2,9 @@ package cn.edu.huel.user.mapper;
 
 import cn.edu.huel.user.domain.Region;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 /**
  * @author ZhangXiaoHua
@@ -11,6 +14,8 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
  */
 public interface RegionMapper extends BaseMapper<Region> {
 
+
+	List<String> selectRegionCodeByAreaId(@Param("areaId") Long areaId);
 
 }
 

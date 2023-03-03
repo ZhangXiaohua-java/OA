@@ -77,12 +77,13 @@ public class OrderConsumer {
 			// TODO MQ给系统交换机发送消息请求分配订单,只需要发送一个订单号和详细的地理位置信息即可
 			OrderDTO dto = new OrderDTO();
 			dto.setOrderID(orderId);
-			dto.setZipCode(orderVO.getPosterZipCode());
+			dto.setCountCode(orderVO.getCountyCode());
+			dto.setUnifiedCode(orderVO.getUnifiedCode());
 			dto.setDetailAddress(orderVO.getDetailAddress());
 			dto.setPhone(orderVO.getPosterPhone());
 			CorrelationData correlationData = new CorrelationData(IdUtil.nanoId());
 			rabbitTemplate.convertAndSend("order.exchange", "order.dispatch", dto, correlationData);
-			// TODO 将订单信息存储到Redis中
+			// TODO 将订单信息存储到Redis中,24小时候自动删除
 			ops.set(RedisConstant.ORDER_PREFIX + orderId, orderVO, Duration.ofDays(1));
 		}
 

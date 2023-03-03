@@ -17,4 +17,14 @@
         region_id,region_name,region_short_name,
         region_code,region_parent_id,region_level
     </sql>
+
+    <select id="selectRegionCodeByAreaId" resultType="java.lang.String">
+        select region_code
+        from sys_region
+        where region_name = (select name
+                             from t_area
+                             where id = #{areaId})
+    </select>
+
+
 </mapper>

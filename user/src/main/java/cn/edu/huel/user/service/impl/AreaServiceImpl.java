@@ -42,8 +42,8 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements IA
 	@Override
 	public List<Area> queryRootAreas() {
 		LambdaQueryWrapper<Area> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.select(Area::getId, Area::getShortname);
-		queryWrapper.eq(Area::getLevel, 1);
+		queryWrapper.select(Area::getId, Area::getShortname, Area::getLevel);
+		queryWrapper.eq(Area::getPid, 0);
 		return this.baseMapper.selectList(queryWrapper);
 	}
 
@@ -117,6 +117,17 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements IA
 	}
 
 
+	/**
+	 * @param id 区域
+	 * @return 根据区域id查询该区域的所有子项目
+	 */
+	@Override
+	public List<Area> queryAllChildAreas(Long id) {
+		LambdaQueryWrapper<Area> query = new LambdaQueryWrapper<>();
+		query.select(Area::getId, Area::getShortname, Area::getLevel);
+		query.eq(Area::getPid, id);
+		return this.baseMapper.selectList(query);
+	}
 
 
 }

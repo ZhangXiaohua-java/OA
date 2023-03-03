@@ -191,6 +191,60 @@
           and del_flag = '0'
         limit 1
     </select>
+    <select id="getEmployeeCountByDeptId" resultType="java.lang.Long">
+        select count(*)
+        from ruoyi.sys_user
+        where dept_id = #{deptId}
+    </select>
+    <select id="selectAllEmployeesByDeptId" resultType="com.ruoyi.common.core.domain.entity.SysUser">
+        select user_id,
+               dept_id,
+               user_name,
+               nick_name,
+               user_type,
+               email,
+               phonenumber,
+               sex,
+               avatar,
+               password,
+               status,
+               del_flag,
+               login_ip,
+               login_date,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remark,
+               outlets_id
+        from sys_user
+        where dept_id = #{deptId}
+    </select>
+    <select id="selectRandomEmployeesByDeptId" resultType="com.ruoyi.common.core.domain.entity.SysUser">
+        select user_id,
+               dept_id,
+               user_name,
+               nick_name,
+               user_type,
+               email,
+               phonenumber,
+               sex,
+               avatar,
+               password,
+               status,
+               del_flag,
+               login_ip,
+               login_date,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remark,
+               outlets_id
+        from sys_user
+        where dept_id = #{deptId}
+        limit #{start},#{end}
+    </select>
 
     <insert id="insertUser" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId">
         insert into sys_user(

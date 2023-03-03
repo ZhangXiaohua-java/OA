@@ -95,5 +95,13 @@ public class OrderVO {
 	/* 订单号 */
 	private String orderId;
 
+	/* 营业网点唯一识别码 */
+	@NotNull(groups = {CreateOrder.class}, message = "营业网点信息不可为空")
+	private String unifiedCode;
+
+	/* 区域代码,用来替换之前的zipcode邮编,使用邮编表示地域过于局限... */
+	@NotNull(groups = {CreateOrder.class}, message = "城市代码不可为空")
+	private String countyCode;
+
 
 }

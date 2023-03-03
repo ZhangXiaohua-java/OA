@@ -42,4 +42,12 @@ public interface FeignRemoteClient {
 	String sendSms(@RequestParam("mobile") String mobile, @RequestParam("param") String param);
 
 
+	/**
+	 * @param areaPath 路径
+	 * @return 查询城市编码
+	 */
+	@PostMapping("/position/region/query")
+	String queryRegionCode(@RequestBody Long[] areaPath);
+
+
 }

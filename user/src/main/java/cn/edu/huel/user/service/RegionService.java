@@ -28,4 +28,11 @@ public interface RegionService extends IService<Region> {
 	List<Region> loadAllChildRegions(String parentRegionId);
 
 
+	/**
+	 *
+	 * @param areaPath 查询城市代码
+	 * @return
+	 */
+	Long queryRegionCode(Long[] areaPath);
+
 }

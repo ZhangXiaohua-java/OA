@@ -328,3 +328,95 @@ CREATE TABLE t_business_department (
   `amap_longitude` varchar(30) not null comment '营业部经纬度',
   `amap_latitude` varchar(30) not null comment '营业部经纬度'
 );
+
+-- ----------------------------
+-- 14.配送服务信息表
+-- ----------------------------
+drop table if exists t_service_support_range;
+create table t_service_support_range
+(
+    id              int primary key auto_increment,
+    street_name     varchar(64) not null comment '街道名字',
+    street_code     char(9)     not null comment '全国街道统一编码',
+    into_ware_house char(1)     not null default 'N' comment '是否支持上门服务,N不支持,Y支持',
+    townName        varchar(64) comment '乡村名字,暂时不考虑设计',
+    count_code      char(6)     not null comment '所属区县的城市代码',
+    count_name      varchar(64) not null comment '所属区县的名字',
+    range_type_code char(1)     not null comment '配送方式,1全境派送,2乡镇自提,3镇中心派送'
+) engine innodb
+  default charset utf8mb4 comment '配送范围支持表';
+
+
+  -- ----------------------------
+  -- 15.运输计划表
+  -- ----------------------------
+drop table if exists t_transport_plan;
+create table t_transport_plan
+(
+    id              int primary key auto_increment,
+    origin          char(6)   not null comment '出发地城市编码+转运场id',
+    destination     char(6)   not null comment '目的地城市代码+转运场id',
+    plan_start_time timestamp not null comment '计划出发时间',
+    plan_reach_time timestamp not null comment '计划到达时间',
+    term            char(1) default '3' comment '计划的运输时效,多久送达',
+    leave_time      timestamp not null comment '实际出发时间',
+    reach_time      timestamp not null comment '实际到达时间',
+    create_time     timestamp not null comment '计划的创建时间',
+    update_time     timestamp not null comment '计划的修改时间,计划时间到达后就不可修改',
+    create_by       bigint    not null comment '计划的创建者id',
+    detail_id       int       not null comment '运输计划的详情id,一对一'
+) engine innodb
+  default charset utf8mb4 comment '运输计划表';
+
+
+
+  -- ----------------------------
+  -- 15.运输计划详情表
+  -- ----------------------------
+drop table if exists t_transport_plan_detail;
+create table t_transport_plan_detail
+(
+    id              int primary key auto_increment,
+    transport_type  char(1) not null comment '计划的运输方式',
+    plan_cost       bigint  not null comment '核算成本',
+    cost            bigint  not null comment '实际的运输成本',
+    charge_person   bigint  not null comment '负责人id',
+    expect_capacity bigint  not null comment '该运输方式对应的可以运输的货物的体积',
+    expect_weight   bigint  not null comment '该运输方式对应的可以运输的货物的重量',
+    capacity        bigint comment '货物实际占用的体积',
+    weight          bigint  not null comment '货物实际的重量'
+
+) engine innodb
+  default charset utf8mb4 comment '运输计划详情表'
+
+  -- ----------------------------
+  -- 16.运输计划的历史更新追踪表
+  -- ----------------------------
+drop table if exists t_transport_trace_history;
+create table t_transport_trace_history
+(
+    id          int primary key auto_increment,
+    plan_id     int       not null comment '运输计划的id',
+    transfer_id int       not null comment '当前的转运场id',
+    reach_time  timestamp not null comment '到达时间',
+    leave_time  timestamp not null comment '离开时间'
+) engine innodb
+  default charset utf8mb4 comment '运输计划的追踪信息表';
+
+
+  -- ----------------------------
+  -- 17.转运场信息
+  -- ----------------------------
+drop table if exists t_transfer_factory;
+create table t_transfer_factory
+(
+    id          int primary key auto_increment,
+    region_code char(6)     not null comment '转运场所在的城市的编码',
+    name        varchar(64) not null comment '转运场名字',
+    level       char(1)     not null comment '转运场级别,省会城市一级转运场,地级市二级转运场',
+    leader_name varchar(64) comment '负责人姓名,暂时用不到',
+    position    varchar(64) not null comment '转运场的位置信息,经度,纬度',
+    zipcode    char(6)     not null comment '转运场所在城市的邮编'
+
+) engine innodb
+  default charset utf8mb4 comment '转运场信息表';

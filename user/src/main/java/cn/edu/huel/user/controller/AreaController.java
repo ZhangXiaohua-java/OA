@@ -3,10 +3,11 @@ package cn.edu.huel.user.controller;
 import cn.edu.huel.security.vo.Result;
 import cn.edu.huel.user.domain.Area;
 import cn.edu.huel.user.service.IAreaService;
+import cn.edu.huel.user.service.RegionService;
 import cn.edu.huel.user.vo.AreaVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.ruoyi.common.core.controller.BaseController;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.Resource;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
@@ -24,8 +25,11 @@ import java.util.stream.Collectors;
 @RequestMapping("/position")
 public class AreaController extends BaseController {
 
-	@Autowired
+	@Resource
 	private IAreaService areaService;
+
+	@Resource
+	private RegionService regionService;
 
 	/**
 	 * 查询全国地理位置信息列表
@@ -53,7 +57,13 @@ public class AreaController extends BaseController {
 	public Result rootAreas() {
 		List<Area> areas = areaService.queryRootAreas();
 		List<AreaVo> rootAreas = areas.stream()
-				.map(e -> new AreaVo(e.getId(), e.getShortname()))
+				.map(e -> {
+					AreaVo vo = new AreaVo();
+					vo.setLabel(e.getShortname());
+					vo.setValue(e.getId());
+					vo.setLeaf(false);
+					return vo;
+				})
 				.collect(Collectors.toList());
 		return Result.ok().put("data", rootAreas);
 	}
@@ -77,6 +87,29 @@ public class AreaController extends BaseController {
 			return Result.error("no data");
 		}
 	}
+
+	@GetMapping("/case/{id}")
+	public Result lazyLoadAreas(@PathVariable Long id) {
+		List<Area> areas = areaService.queryAllChildAreas(id);
+		List<AreaVo> list = areas.stream()
+				.map(e -> {
+					AreaVo vo = new AreaVo();
+					vo.setLabel(e.getShortname());
+					vo.setValue(e.getId());
+					vo.setLeaf(e.getLevel() == 3);
+					return vo;
+				}).collect(Collectors.toList());
+		return Result.ok().put("data", list);
+	}
+
+
+	@PostMapping("/region/query")
+	public Result queryRegionCode(@RequestBody Long[] areaPath) {
+		Long code = regionService.queryRegionCode(areaPath);
+		return Result.ok().put("data", code);
+	}
+
+
 
 
 }

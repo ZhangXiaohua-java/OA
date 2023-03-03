@@ -42,12 +42,14 @@ public class OrderService {
 		List<OrderVO> range = ops.range(RedisConstant.ASSIGN_TASK_PREFIX + userId, 0, -1);
 		List<OrderVO> list = range.stream()
 				.filter(e -> !ids.contains(e.getOrderId()))
+				.distinct()
 				.collect(Collectors.toList());
 		if (list.isEmpty()) {
 			log.info("删除了所有的任务");
 			redisTemplate.delete(RedisConstant.ASSIGN_TASK_PREFIX + userId);
 		} else {
 			log.info("过滤之后的任务{}", list);
+			redisTemplate.delete(RedisConstant.ASSIGN_TASK_PREFIX + userId);
 			ops.rightPushAll(RedisConstant.ASSIGN_TASK_PREFIX + userId, list);
 		}
 	}
@@ -93,8 +95,6 @@ public class OrderService {
 		Long remove = listOps.remove(1, vo);
 		return !Long.valueOf(0).equals(remove);
 	}
-
-
 
 
 }

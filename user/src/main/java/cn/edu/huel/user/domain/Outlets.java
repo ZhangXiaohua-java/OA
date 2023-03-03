@@ -57,6 +57,8 @@ public class Outlets implements Serializable {
 	 */
 	private Long leaderId;
 
+
+
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
 
