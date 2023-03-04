@@ -1,8 +1,8 @@
 package com.ruoyi;
 
-import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.ruoyi.web.domain.TransferFactory;
+import com.ruoyi.web.schedule.TransportPlanRouteTask;
 import com.ruoyi.web.service.TransferFactoryService;
+import lombok.extern.slf4j.Slf4j;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,13 +13,14 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.util.concurrent.Executor;
 
 /**
  * 启动程序
  *
  * @author ruoyi
  */
+@Slf4j
 @MapperScan(basePackages = {"com.ruoyi.web.mapper"})
 @EnableScheduling
 @EnableAspectJAutoProxy(exposeProxy = true, proxyTargetClass = true)
@@ -29,6 +30,11 @@ public class RuoYiApplication implements CommandLineRunner {
 
 	@Resource
 	private TransferFactoryService transferFactoryService;
+
+	private TransportPlanRouteTask transportPlanRouteTask;
+
+	@Resource
+	private Executor executor;
 
 
 	public static void main(String[] args) {
@@ -49,11 +55,8 @@ public class RuoYiApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-		LambdaUpdateWrapper<TransferFactory> query = new LambdaUpdateWrapper<>();
-		query.eq(TransferFactory::getId, 1L);
-		List<TransferFactory> list = transferFactoryService.list(query);
-		System.out.println("-------------------");
-		System.out.println(list);
+		// TODO 异步线程池
+		log.info("开始执行运输计划的任务");
 	}
 
 

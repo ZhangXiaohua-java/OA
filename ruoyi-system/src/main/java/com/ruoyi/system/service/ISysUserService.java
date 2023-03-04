@@ -217,4 +217,19 @@ public interface ISysUserService {
 	 * @return 从该部门随机获取最多10个员工的信息
 	 */
 	List<SysUser> getRandomTenEmployeesByDeptId(Long deptId);
+
+
+	/**
+	 * @param deptId 部门id
+	 * @return 查询该部门的所有员工信息
+	 */
+	List<SysUser> getEmployeesByDeptId(Long deptId);
+
+	/**
+	 * @param deptId     部门id
+	 * @param employeeId 员工id
+	 * @return 填充过的员工信息
+	 */
+	SysUser getUserByDeptIdAndId(Long deptId, Long employeeId);
+
 }

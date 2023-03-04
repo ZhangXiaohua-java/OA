@@ -78,6 +78,21 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region> impleme
 	}
 
 
+	/**
+	 * @param regionCode 区县代码
+	 * @return 纬度, 精度
+	 */
+	@Override
+	public String queryLngAndLatByRegionCode(String regionCode) {
+		LambdaQueryWrapper<Region> queryWrapper = new LambdaQueryWrapper<>();
+		queryWrapper.eq(Region::getRegionCode, regionCode)
+				.select(Region::getRegionName, Region::getRegionParentId);
+		Region region = this.baseMapper.selectOne(queryWrapper);
+		String regionName = this.baseMapper.selectOne(new LambdaQueryWrapper<Region>().eq(Region::getRegionId, region.getRegionParentId())).getRegionName();
+		return areaService.queryLngAndLatByCountName(region.getRegionName(), regionName);
+	}
+
+
 }
 
 

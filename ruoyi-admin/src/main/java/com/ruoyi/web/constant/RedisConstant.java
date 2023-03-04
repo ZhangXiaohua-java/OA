@@ -16,4 +16,15 @@ public final class RedisConstant {
 	/* Redis中员工待揽件的订单号前缀 */
 	public static final String ORDER_TO_COLLECT_ID_PREFIX = "order:collect:";
 
+
+	/* 规划路径的原始信息*/
+	public static final String TRANSPORT_PLAN_ROUTE_PATH_RAW_PREFIX = "transport:route:path:raw:";
+
+	/* 规划路径的简略信息 */
+	public static final String TRANSPORT_PLAN_ROUTE_PATH_PREFIX = "transport:route:path:";
+
+	/* 每个区域内所有待运输件的前缀 */
+	public static final String REGION_ORDER_TRANSPORT_PREFIX = "order:transport:region:";
+
+
 }

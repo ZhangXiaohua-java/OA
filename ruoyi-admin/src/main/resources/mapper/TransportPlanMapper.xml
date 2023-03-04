@@ -18,12 +18,15 @@
         <result property="createBy" column="create_by" jdbcType="BIGINT"/>
         <result property="detailId" column="detail_id" jdbcType="INTEGER"/>
         <result property="status" column="status" jdbcType="CHAR"/>
+        <result property="routePath" column="route_path" jdbcType="BLOB"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,origin,destination,
         plan_start_time,plan_reach_time,term,
         leave_time,reach_time,create_time,
-        update_time,create_by,detail_id
+        update_time,create_by,detail_id,route_path
     </sql>
+
+
 </mapper>

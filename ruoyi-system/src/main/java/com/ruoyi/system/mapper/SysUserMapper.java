@@ -145,4 +145,13 @@ public interface SysUserMapper {
 	 * @return 查询指定个数的员工信息
 	 */
 	List<SysUser> selectRandomEmployeesByDeptId(@Param("deptId") Long deptId, @Param("start") int start, @Param("end") int end);
+
+	/**
+	 * @param deptId     部门id
+	 * @param employeeId 员工id
+	 * @return 填充过的员工信息
+	 */
+	SysUser selectUserByDeptIdAndId(@Param("deptId") Long deptId, @Param("employeeId") Long employeeId);
+
+
 }

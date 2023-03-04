@@ -312,4 +312,18 @@ public class SysDeptServiceImpl implements ISysDeptService {
 	public SysDept queryDeptByUnifiedCode(String countCode, String unifiedCode) {
 		return deptMapper.selectDeptByUnifiedCode(countCode, unifiedCode);
 	}
+
+
+	/**
+	 * 这个方法和上面的selectById区别开,上面的查询不知道为什么会导致卡死
+	 *
+	 * @param deptId 部门id
+	 * @return 根据id查询部门信息
+	 */
+	@Override
+	public SysDept selectById(Long deptId) {
+		return deptMapper.selectById(deptId);
+	}
+
+
 }

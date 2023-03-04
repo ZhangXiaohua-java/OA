@@ -1,7 +1,7 @@
 /**
   * Copyright 2023 json.cn 
   */
-package cn.edu.huel.user.domain;
+package com.ruoyi.web.domain;
 import lombok.Data;
 
 import java.util.List;
@@ -16,8 +16,11 @@ import java.util.List;
 public class Route {
 
     private String origin;
+
     private String destination;
+
     private String taxi_cost;
+
     private List<Paths> paths;
 
 }

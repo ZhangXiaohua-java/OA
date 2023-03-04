@@ -34,6 +34,14 @@
                lat
         from t_area
     </sql>
+    <select id="selectCountLngAndLatByName" resultType="cn.edu.huel.user.domain.Area">
+        select lat, lng
+        from t_area
+        where name = #{regionName}
+          and pid = (select id
+                     from t_area
+                     where name = #{parentRegionName})
+    </select>
 
 
 </mapper>

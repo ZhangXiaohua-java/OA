@@ -64,7 +64,7 @@
             AND unified_code = #{unifiedCode}
         </if>
         <!-- 数据范围过滤 -->
-        ${params.dataScope}
+        # ${params.dataScope}
         order by d.parent_id, d.order_num
     </select>
 
@@ -134,6 +134,10 @@
         <include refid="selectDeptVo"/>
         where count_code = #{countCode}
         and unified_code = #{unifiedCode}
+    </select>
+    <select id="selectById" resultType="com.ruoyi.common.core.domain.entity.SysDept">
+        <include refid="selectDeptVo"/>
+        where dept_id = #{deptId}
     </select>
 
     <insert id="insertDept" parameterType="SysDept">

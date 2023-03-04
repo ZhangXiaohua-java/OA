@@ -1,7 +1,7 @@
 /**
  * Copyright 2023 json.cn
  */
-package cn.edu.huel.user.domain;
+package com.ruoyi.web.domain;
 
 import lombok.Data;
 
@@ -14,14 +14,14 @@ import java.util.List;
  * @website http://www.json.cn/java2pojo/
  */
 @Data
-public class Paths {
+public class Cities {
 
-	private String distance;
+	private String adcode;
 
-	private String restriction;
+	private String citycode;
 
-	private Cost cost;
+	private String city;
 
-	private List<Steps> steps;
+	private List<Districts> districts;
 
 }

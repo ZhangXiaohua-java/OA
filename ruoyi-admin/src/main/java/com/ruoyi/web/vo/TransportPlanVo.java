@@ -54,4 +54,14 @@ public class TransportPlanVo {
 
 	private String destRegionCode;
 
+	@NotNull(message = "部门信息不可为空")
+	@Min(value = 1, message = "非法的部门信息")
+	private Long deptId;
+
+
+	@NotNull(message = "负责人信息不可为空")
+	@Min(value = 1, message = "非法的负责人信息")
+	private Long employeeId;
+
+
 }

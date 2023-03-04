@@ -78,8 +78,16 @@ public class TransportPlan implements Serializable {
 	 */
 	private Integer detailId;
 
-	/* 计划的状态 */
+	/* 计划的状态,1新建,2已经生成了路径信息,3已经分配了路径信息,4已发出,5运行中,6已完成 */
 	private char status;
+
+	/* 路线信息,用Blob存储的Json二进制信息,可以还原成RoutePath对象 */
+	private byte[] routePath;
+
+	/* 数据库中不存在这个字段,这个字段是routePath的具体信息,方便使用而已 */
+	@TableField(exist = false)
+	private RoutePath path;
+
 
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;

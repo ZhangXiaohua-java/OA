@@ -245,6 +245,31 @@
         where dept_id = #{deptId}
         limit #{start},#{end}
     </select>
+    <select id="selectUserByDeptIdAndId" resultType="com.ruoyi.common.core.domain.entity.SysUser">
+        select user_id,
+               dept_id,
+               user_name,
+               nick_name,
+               user_type,
+               email,
+               phonenumber,
+               sex,
+               avatar,
+               password,
+               status,
+               del_flag,
+               login_ip,
+               login_date,
+               create_by,
+               create_time,
+               update_by,
+               update_time,
+               remark,
+               outlets_id
+        from sys_user
+        where dept_id = #{deptId}
+          and user_id = #{employeeId}
+    </select>
 
     <insert id="insertUser" parameterType="SysUser" useGeneratedKeys="true" keyProperty="userId">
         insert into sys_user(

@@ -109,7 +109,14 @@ public class AreaController extends BaseController {
 		return Result.ok().put("data", code);
 	}
 
-
+	/**
+	 * @param regionCode 区县代码
+	 * @return 返回区县的大概经纬度信息
+	 */
+	@GetMapping("/region/{regionCode}")
+	public String queryLngAndLat(@PathVariable String regionCode) {
+		return regionService.queryLngAndLatByRegionCode(regionCode);
+	}
 
 
 }

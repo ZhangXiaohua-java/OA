@@ -15,6 +15,18 @@ ruoyi:
   # 验证码类型 math 数组计算 char 字符验证
   captchaType: math
 
+# TODO 吐了,找了俩小时的bug
+feign:
+  client:
+    config:
+      default:
+        connect-timeout: 10000
+        read-timeout: 10000
+  httpclient:
+    enabled: false
+  okhttp:
+    enabled: true
+
 # 开发环境配置
 server:
   # 服务器的HTTP端口，默认为8080

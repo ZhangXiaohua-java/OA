@@ -50,4 +50,12 @@ public interface FeignRemoteClient {
 	String queryRegionCode(@RequestBody Long[] areaPath);
 
 
+	/**
+	 * @param regionCode 区县代码
+	 * @return 查询经纬度信息
+	 */
+	@GetMapping("/position/region/{regionCode}")
+	String getCountDetailPosition(@PathVariable("regionCode") String regionCode);
+
+
 }

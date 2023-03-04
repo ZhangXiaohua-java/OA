@@ -1,7 +1,7 @@
 /**
   * Copyright 2023 json.cn 
   */
-package cn.edu.huel.user.domain;
+package com.ruoyi.web.domain;
 
 import lombok.Data;
 
@@ -12,15 +12,12 @@ import lombok.Data;
  * @website http://www.json.cn/java2pojo/
  */
 @Data
-public class RoutePlan {
+public class Districts {
 
-    private String status;
+    private String name;
 
-    private String info;
+    private String adcode;
 
-    private String infocode;
 
-    private String count;
 
-    private Route route;
 }

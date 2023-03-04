@@ -123,4 +123,11 @@ public interface SysDeptMapper
      */
     SysDept selectDeptByUnifiedCode(@Param("countCode") String countCode, @Param("unifiedCode") String unifiedCode);
 
+    /***
+     *
+     * @param deptId 部门id
+     * @return 根据id查询详情
+     */
+    SysDept selectById(@Param("deptId") Long deptId);
+
 }

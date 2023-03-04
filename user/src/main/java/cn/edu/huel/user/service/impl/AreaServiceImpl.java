@@ -129,5 +129,17 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements IA
 		return this.baseMapper.selectList(query);
 	}
 
+	/**
+	 * @param regionName 区域名
+	 * @return 经纬度细腻
+	 */
+	@Override
+	public String queryLngAndLatByCountName(String regionName, String parentRegionName) {
+		LambdaQueryWrapper<Area> query = new LambdaQueryWrapper<>();
+		query.eq(Area::getName, regionName);
+		Area area = this.baseMapper.selectCountLngAndLatByName(regionName, parentRegionName);
+		return (area.getLng() + "," + area.getLat());
+	}
+
 
 }

@@ -70,4 +70,13 @@ public interface IAreaService extends IService<Area> {
 	List<Area> queryAllChildAreas(Long id);
 
 
+	/**
+	 *
+	 * @param regionName 区域名
+	 * @param parentRegionName 父区域名,用来解决重名的区县问题
+	 * @return 经纬度细腻
+	 */
+	String queryLngAndLatByCountName(String regionName,String parentRegionName);
+
+
 }

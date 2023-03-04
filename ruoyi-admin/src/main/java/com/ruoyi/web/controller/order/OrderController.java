@@ -5,10 +5,12 @@ import cn.edu.huel.user.vo.OrderVO;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.bean.BeanUtils;
+import com.ruoyi.web.constant.RedisConstant;
 import com.ruoyi.web.controller.service.OrderService;
 import com.ruoyi.web.feign.FeignRemoteClient;
 import com.ruoyi.web.vo.OrderVo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -78,8 +80,8 @@ public class OrderController {
 				.distinct()
 				.collect(Collectors.toList());
 		LoginUser principal = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		orderService.removeTasksByOrderIds(ids, principal.getUserId());
 		String res = remoteClient.batchUpdateOrderStatus(orderIds, OrderStatus.CONFIRMED);
+		orderService.removeTasksByOrderIds(ids, principal.getUserId());
 		log.info("远程服务的响应结果{}", res);
 		// 收件通知,将订单尾号后六位发送给员工即可
 		// TODO 自定义线程池
@@ -121,7 +123,12 @@ public class OrderController {
 		log.info("订单号{}重量为{}KG,体积为{}立方厘米", orderVO.getOrderId(), orderVO.getWeight(), orderVO.getVolume());
 		LoginUser principal = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		log.info("订单{}已经被揽收了", orderVO.getOrderId());
+		OrderVO order = (OrderVO) redisTemplate.opsForValue().get(RedisConstant.ORDER_PREFIX + orderVO.getOrderId());
+		String countyCode = order.getCountyCode();
+		BoundSetOperations<String, Object> ops = redisTemplate.boundSetOps(RedisConstant.REGION_ORDER_TRANSPORT_PREFIX + countyCode);
+		// TODO  订单确认之后统一将订单信息加入到区域性的转运场集合的待运输的订单集合中去,后续的运输计划会处理这些订单
 		boolean result = orderService.confirmCollectOrder(orderVO.getOrderId(), principal.getUserId());
+		ops.add(orderVO.getOrderId());
 		CompletableFuture.runAsync(() -> {
 			OrderTo to = new OrderTo();
 			BeanUtils.copyProperties(orderVO, to);
@@ -130,6 +137,7 @@ public class OrderController {
 			remoteClient.confirmCollectOrder(to);
 		});
 		if (result) {
+
 			return new AjaxResult(200, "ok");
 		} else {
 			return new AjaxResult(500, "fail");

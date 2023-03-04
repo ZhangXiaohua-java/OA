@@ -35,4 +35,13 @@ public interface RegionService extends IService<Region> {
 	 */
 	Long queryRegionCode(Long[] areaPath);
 
+	/**
+	 *
+	 * @param regionCode 区县代码
+	 * @return 纬度,精度
+	 */
+	String queryLngAndLatByRegionCode(String regionCode);
+
+
 }
+

@@ -27,4 +27,25 @@ public interface TransportPlanService extends IService<TransportPlan> {
 	 */
 	boolean createNewPlan(TransportPlanVo planVo);
 
+	/**
+	 * @return 查询最近的运输计划信息
+	 */
+	List<TransportPlan> queryRecentTransportPlan();
+
+
+	/**
+	 * @param id 计划id
+	 * @param c  状态值
+	 */
+	void updatePlanStatus(Integer id, char c);
+
+	/**
+	 * 更新路线信息
+	 *
+	 * @param id    计划id
+	 * @param bytes 路线信息
+	 */
+	void assignRoutePath(Integer id, byte[] bytes);
+
+
 }

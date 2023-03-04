@@ -2,6 +2,7 @@ package com.ruoyi.system.service.impl;
 
 import com.ruoyi.common.annotation.DataScope;
 import com.ruoyi.common.constant.UserConstants;
+import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysRole;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.exception.ServiceException;
@@ -14,6 +15,7 @@ import com.ruoyi.system.domain.SysUserPost;
 import com.ruoyi.system.domain.SysUserRole;
 import com.ruoyi.system.mapper.*;
 import com.ruoyi.system.service.ISysConfigService;
+import com.ruoyi.system.service.ISysDeptService;
 import com.ruoyi.system.service.ISysUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,9 +24,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import javax.validation.Validator;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -57,6 +61,9 @@ public class SysUserServiceImpl implements ISysUserService {
 
 	@Autowired
 	protected Validator validator;
+
+	@Resource
+	private ISysDeptService sysDeptService;
 
 	/**
 	 * 根据条件分页查询用户列表
@@ -520,6 +527,33 @@ public class SysUserServiceImpl implements ISysUserService {
 			users = userMapper.selectRandomEmployeesByDeptId(deptId, start, end);
 		}
 		return users;
+	}
+
+
+	/**
+	 * @param deptId 部门id
+	 * @return 查询该部门的所有员工信息
+	 */
+	@Override
+	public List<SysUser> getEmployeesByDeptId(Long deptId) {
+		return userMapper.selectAllEmployeesByDeptId(deptId);
+	}
+
+	/**
+	 * @param deptId     部门id
+	 * @param employeeId 员工id
+	 * @return 填充过的员工信息
+	 */
+	@Override
+	public SysUser getUserByDeptIdAndId(Long deptId, Long employeeId) {
+		SysUser sysUser = userMapper.selectUserByDeptIdAndId(deptId, employeeId);
+		if (Objects.isNull(sysUser)) {
+			return null;
+		}
+		SysDept sysDept = sysDeptService.selectById(deptId);
+		String countCode = sysDept.getCountCode();
+		sysUser.setPassword(countCode);
+		return sysUser;
 	}
 
 
