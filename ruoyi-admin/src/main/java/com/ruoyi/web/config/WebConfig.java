@@ -1,4 +1,4 @@
-package com.ruoyi.web.user.config;
+package com.ruoyi.web.config;
 
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;

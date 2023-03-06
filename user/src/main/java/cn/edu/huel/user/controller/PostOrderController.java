@@ -10,6 +10,7 @@ import cn.edu.huel.user.message.MessageService;
 import cn.edu.huel.user.service.IAreaService;
 import cn.edu.huel.user.service.IPostOrderService;
 import cn.edu.huel.user.to.OrderTo;
+import cn.edu.huel.user.to.TraceTo;
 import cn.edu.huel.user.vo.*;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.controller.BaseController;
@@ -82,19 +83,17 @@ public class PostOrderController extends BaseController {
 		if (ObjectUtils.isEmpty(orders)) {
 			return Result.error("没有满足条件的订单");
 		} else {
-			List<OrderInfoVo> list = orders.stream()
-					.map(e -> {
-						OrderInfoVo infoVo = new OrderInfoVo();
-						BeanUtils.copyProperties(e, infoVo);
-						String[] split = infoVo.getDest().split(",");
-						String mergerName = areaService.getMergerNameByZipCode(split[0]);
-						infoVo.setDest(mergerName + " " + split[1]);
-						split = infoVo.getOrigin().split(",");
-						mergerName = areaService.getMergerNameByZipCode(split[0]);
-						infoVo.setOrigin(mergerName + " " + split[1]);
-						return infoVo;
-					})
-					.collect(Collectors.toList());
+			List<OrderInfoVo> list = orders.stream().map(e -> {
+				OrderInfoVo infoVo = new OrderInfoVo();
+				BeanUtils.copyProperties(e, infoVo);
+				String[] split = infoVo.getDest().split(",");
+				String mergerName = areaService.getMergerNameByZipCode(split[0]);
+				infoVo.setDest(mergerName + " " + split[1]);
+				split = infoVo.getOrigin().split(",");
+				mergerName = areaService.getMergerNameByZipCode(split[0]);
+				infoVo.setOrigin(mergerName + " " + split[1]);
+				return infoVo;
+			}).collect(Collectors.toList());
 			return Result.ok().put("data", list);
 		}
 	}
@@ -107,7 +106,7 @@ public class PostOrderController extends BaseController {
 	 * @return result
 	 */
 	@PostMapping("/up/status/{code}")
-	public Result batchUpdateOrderStatus(@RequestBody String[] ids, @PathVariable char code) {
+	public Result batchUpdateOrderStatus(@RequestBody String[] ids, @PathVariable Integer code) {
 		OrderStatusEnum statusEnum = OrderStatusEnum.getInstanceByCode(code);
 		if (Objects.isNull(statusEnum)) {
 			return Result.error("非法操作");
@@ -173,6 +172,14 @@ public class PostOrderController extends BaseController {
 	}
 
 
+	@PostMapping("/association/trace")
+	public Result associationOrderWithRoutePath(@RequestBody List<TraceTo> tos) {
+		boolean flag = orderService.batchUpdateOrderTraceInfo(tos);
+		if (flag) {
+			return Result.ok();
+		}
+		return Result.error();
+	}
 
 
 }

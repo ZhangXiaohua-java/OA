@@ -1,4 +1,4 @@
-package com.ruoyi.web.user.config;
+package com.ruoyi.web.config;
 
 import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
@@ -28,13 +28,32 @@ public class MessageConfig {
 	}
 
 	@Bean
-	public Binding dispatchOrderBinding(Queue dispatchQueue,DirectExchange orderExchange) {
+	public Binding dispatchOrderBinding(Queue dispatchQueue, DirectExchange orderExchange) {
 		return BindingBuilder.bind(dispatchQueue)
 				.to(orderExchange)
 				.with("order.dispatch");
 	}
 
 
+	@Bean
+	public Queue dispatchOrderQueue() {
+		return QueueBuilder.durable("dispatch.order.queue").build();
+	}
+
+
+	@Bean
+	public DirectExchange dispatchExchange() {
+		return ExchangeBuilder.directExchange("dispatch.order.exchange")
+				.durable(true)
+				.build();
+	}
+
+
+	@Bean
+	public Binding dispatchBinding(Queue dispatchOrderQueue, DirectExchange dispatchExchange) {
+		return BindingBuilder.bind(dispatchOrderQueue)
+				.to(dispatchExchange).with("dispatch.order");
+	}
 
 
 }

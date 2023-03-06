@@ -2,6 +2,7 @@ package com.ruoyi.web.feign;
 
 import cn.edu.huel.user.domain.Outlets;
 import cn.edu.huel.user.to.OrderTo;
+import cn.edu.huel.user.to.TraceTo;
 import com.ruoyi.web.to.LoginInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public interface FeignRemoteClient {
 
 
 	@PostMapping("/order/up/status/{code}")
-	String batchUpdateOrderStatus(@RequestBody String[] ids, @PathVariable("code") char code);
+	String batchUpdateOrderStatus(@RequestBody String[] ids, @PathVariable("code") Integer code);
 
 
 	/**
@@ -56,6 +57,10 @@ public interface FeignRemoteClient {
 	 */
 	@GetMapping("/position/region/{regionCode}")
 	String getCountDetailPosition(@PathVariable("regionCode") String regionCode);
+
+
+	@PostMapping("/order/association/trace")
+	String associationOrderWithRoutePath(@RequestBody List<TraceTo> tos);
 
 
 }

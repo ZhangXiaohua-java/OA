@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.OrderTaskMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruoyi.web.domain.OrderTask">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="orderId" column="order_id" jdbcType="CHAR"/>
+        <result property="employeeId" column="employee_id" jdbcType="BIGINT"/>
+        <result property="employeeName" column="employee_name" jdbcType="VARCHAR"/>
+        <result property="unifiedCode" column="unified_code" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="CHAR"/>
+        <result property="posterPhone" column="poster_phone" jdbcType="CHAR"/>
+        <result property="posterName" column="poster_name" jdbcType="VARCHAR"/>
+        <result property="confirmWeight" column="confirm_weight" jdbcType="INTEGER"/>
+        <result property="confirmVolume" column="confirm_volume" jdbcType="INTEGER"/>
+        <result property="confirmPostCost" column="confirm_post_cost" jdbcType="INTEGER"/>
+        <result property="confirmTime" column="confirm_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="posterDetailAddress" column="poster_detail_address"/>
+        <result property="receiverInfo" column="receiver_info"/>
+        <result property="appointmentTime" column="appointment_time"/>
+        <result property="remark" column="remark"/>
+        <result property="destCountCode" column="dest_count_code"/>
+        <result property="sourceCountCode" column="source_count_code"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,order_id,employee_id,
+        employee_name,unified_code,status,
+        poster_phone,poster_name,confirm_weight,
+        confirm_volume,confirm_post_cost,confirm_time,
+        create_time,poster_detail_address,receiver_info,
+            appointment_time,remark,dest_count_code,source_count_code
+    </sql>
+
+
+</mapper>

@@ -22,6 +22,7 @@
         <result property="status" column="status"/>
         <result property="weight" column="weight"/>
         <result property="volume" column="volume"/>
+        <result property="traceId" column="trace_id"/>
     </resultMap>
 
     <sql id="selectPostOrderVo">
@@ -41,9 +42,17 @@
                receiver_phone,
                status,
                weight,
-               volume
+               volume,
+               trace_id
         from t_post_order
     </sql>
+
+    <select id="selectUnpaiedAmount" resultType="java.math.BigDecimal">
+        select sum(pay)
+        from t_post_order
+        where customer_id = #{customerId}
+          and (status &lt; 4 or status &gt; 9)
+    </select>
 
 
 </mapper>

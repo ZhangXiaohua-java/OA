@@ -26,5 +26,10 @@ public final class RedisConstant {
 	/* 每个区域内所有待运输件的前缀 */
 	public static final String REGION_ORDER_TRANSPORT_PREFIX = "order:transport:region:";
 
+	public static final String TRACE_INFO_PREFIX = "trace:info:";
+
+	/* 运输计划和订单的映射关系 */
+	public static final String ORDER_TRACE_RELATION = "trace:order:";
+
 
 }

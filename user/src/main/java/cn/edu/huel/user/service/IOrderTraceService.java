@@ -1,6 +1,6 @@
 package cn.edu.huel.user.service;
 
-import cn.edu.huel.user.domain.Transport;
+import cn.edu.huel.user.domain.OrderTrace;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -9,6 +9,6 @@ import com.baomidou.mybatisplus.extension.service.IService;
  * @author 张晓华
  * @date 2023-02-18
  */
-public interface ITransportService  extends IService<Transport> {
+public interface IOrderTraceService extends IService<OrderTrace> {
 
 }

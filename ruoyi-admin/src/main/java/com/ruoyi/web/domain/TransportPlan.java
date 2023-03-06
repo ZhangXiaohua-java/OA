@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
+import lombok.ToString;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,6 +15,7 @@ import java.util.Date;
  *
  * @TableName t_transport_plan
  */
+@ToString(exclude = {"routePath"})
 @TableName(value = "t_transport_plan")
 @Data
 public class TransportPlan implements Serializable {

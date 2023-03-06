@@ -4,11 +4,15 @@ import cn.edu.huel.base.HashObjectMapper;
 import cn.edu.huel.user.base.constant.OrderStatusEnum;
 import cn.edu.huel.user.base.constant.RedisConstant;
 import cn.edu.huel.user.base.ex.UnTrustedMessageException;
+import cn.edu.huel.user.domain.CustomerBill;
+import cn.edu.huel.user.domain.OrderPayDetail;
 import cn.edu.huel.user.dto.AliMessage;
 import cn.edu.huel.user.dto.AliPayNotifyMessage;
 import cn.edu.huel.user.dto.MessageDto;
+import cn.edu.huel.user.service.CustomerBillService;
 import cn.edu.huel.user.service.IIntegralService;
 import cn.edu.huel.user.service.IPostOrderService;
+import cn.edu.huel.user.service.OrderPayDetailService;
 import cn.edu.huel.user.to.TradeTo;
 import com.alibaba.fastjson.JSON;
 import com.alipay.api.AlipayApiException;
@@ -58,6 +62,12 @@ public class AlipayController {
 
 	@Resource
 	private IIntegralService integralService;
+
+	@Resource
+	private CustomerBillService billService;
+
+	@Resource
+	private OrderPayDetailService orderPayDetailService;
 
 
 	@GetMapping("/trade/pay")
@@ -136,8 +146,27 @@ public class AlipayController {
 			BigDecimal paied = (BigDecimal) ops.get(RedisConstant.ORDER_PAY_INFO_PREFIX + tradeNo);
 			// TODO 更新订单状态为已支付
 			orderService.updateOrderStatus(tradeNo, OrderStatusEnum.PAYED);
+			// TODO 保存支付明细信息
+			OrderPayDetail detail = new OrderPayDetail();
+			detail.setStatus(1);
+			detail.setAmount(paied.doubleValue());
+			String customerId = orderService.queryCustomerIdByOrderId(tradeNo);
+			detail.setCustomerId(customerId);
+			detail.setDelFlag(0);
+			detail.setType("1");
+			detail.setPayTime(new Date());
+			detail.setTradeNum(aliMessage.getTrade_no());
+			detail.setPayAccount(aliMessage.getBuyer_id());
+			detail.setReceiveAccount(aliMessage.getSeller_id());
+			CustomerBill bill = billService.queryCustomerMonthBill(customerId);
+			detail.setBillId(bill.getId());
+			boolean save = orderPayDetailService.save(detail);
+			log.info("支付详情保存结果{}", save);
+			// TODO 更新账单信息
+			boolean flag = billService.updateAmount(customerId, amount);
+			log.info("账单更新结果{}", flag);
 			// TODO 增加用户积分
-			Integer integralAmount = Integer.parseInt(amount) * 10;
+			Integer integralAmount = new BigDecimal(amount).intValue() * 10;
 			if (integralService.addIntegral(tradeNo, integralAmount)) {
 				log.info("订单{}产生了{}积分", tradeNo, integralAmount);
 			}

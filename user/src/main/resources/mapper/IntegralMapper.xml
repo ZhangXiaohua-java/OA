@@ -23,7 +23,7 @@
     </sql>
 
     <select id="queryLastIntegral" resultType="cn.edu.huel.user.domain.Integral">
-        <include refid="baseColumns"/>
+        <include refid="selectIntegralVo"/>
         where update_time = (
         select max(update_time) from t_integral
         where customer_id = #{customerId}

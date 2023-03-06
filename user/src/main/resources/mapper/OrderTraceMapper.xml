@@ -2,28 +2,32 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="cn.edu.huel.user.mapper.TransportMapper">
+<mapper namespace="cn.edu.huel.user.mapper.OrderTraceMapper">
 
-    <resultMap type="cn.edu.huel.user.domain.Transport" id="TransportResult">
+    <resultMap type="cn.edu.huel.user.domain.OrderTrace" id="TransportResult">
         <result property="id" column="id"/>
-        <result property="customerId" column="customer_id"/>
         <result property="orderId" column="order_id"/>
         <result property="currentPosition" column="current_position"/>
         <result property="updateTime" column="update_time"/>
         <result property="employeeId" column="employee_id"/>
         <result property="employeeName" column="employee_name"/>
         <result property="remark" column="remark"/>
+        <result property="status" column="status"/>
+        <result property="traceId" column="trace_id"/>
+        <result property="updateTime" column="update_time"/>
     </resultMap>
 
     <sql id="selectTransportVo">
         select id,
-               customer_id,
                order_id,
                current_position,
                update_time,
                employee_id,
                employee_name,
-               remark
+               remark,
+               status,
+               trace_id,
+               update_time
         from t_transport
     </sql>
 

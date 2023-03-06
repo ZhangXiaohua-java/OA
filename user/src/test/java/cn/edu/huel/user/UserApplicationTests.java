@@ -1,8 +1,10 @@
 package cn.edu.huel.user;
 
 import cn.edu.huel.user.domain.Area;
+import cn.edu.huel.user.domain.PostOrder;
 import cn.edu.huel.user.domain.ServiceSupportRange;
 import cn.edu.huel.user.service.IAreaService;
+import cn.edu.huel.user.service.IPostOrderService;
 import cn.edu.huel.user.service.SmsService;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.IdUtil;
@@ -16,6 +18,7 @@ import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.*;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -28,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Objects;
 
+@SpringBootTest
 public class UserApplicationTests {
 
 	@Resource
@@ -336,8 +340,20 @@ public class UserApplicationTests {
 		byte[] bytes = new byte[]{
 				97, 112, 112, 108, 105, 99, 97, 116, 105, 111, 110, 47, 106, 115, 111, 110, 59, 32, 99, 104, 97, 114, 115, 101, 116, 61, 85, 84, 70, 45, 56
 		};
-		System.out.println(new String(bytes,StandardCharsets.UTF_8));
+		System.out.println(new String(bytes, StandardCharsets.UTF_8));
 	}
 
+
+	@Resource
+	private IPostOrderService orderService;
+
+	@Test
+	public void update() {
+		PostOrder order = new PostOrder();
+		order.setId("1632242897527508992");
+		order.setStatus((char) 10);
+		boolean update = orderService.updateById(order);
+		System.out.println(update);
+	}
 
 }

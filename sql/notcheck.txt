@@ -420,3 +420,87 @@ create table t_transfer_factory
 
 ) engine innodb
   default charset utf8mb4 comment '转运场信息表';
+
+    -- ----------------------------
+    -- 18.支付明细表
+    -- ----------------------------
+drop table  if exists t_order_pay_detail;
+create table t_order_pay_detail
+(
+    id              int primary key auto_increment,
+    trade_num       varchar(64)  not null comment '支付流水号',
+    type            char(1)      not null comment '支付方式',
+    pay_account     varchar(32)  not null comment '支付账号信息',
+    amount          double(9, 3) not null comment '支付金额',
+    receive_account varchar(32)  not null comment '收款账号',
+    pay_time        datetime     not null comment '交易时间',
+    customer_id     char(19)     not null comment '顾客id',
+    status          char(1)      not null default '0' comment '交易状态,0失败,1成功',
+    del_flag        char(1)      not null default 0 comment '删除标志,0为删除,1已删除',
+    bill_id         int          not null comment '顾客支付时的周期账单id,冗余字段,减少查表次数'
+) engine innodb
+  default charset utf8mb4 comment '支付明细表';
+
+
+    -- ----------------------------
+    -- 19.顾客账单表
+    -- ----------------------------
+drop table if exists t_customer_bill;
+create table t_customer_bill
+(
+    id          int primary key,
+    amount      double(9, 3) not null default 0.0 comment '消费金额',
+    customer_id char(19)     not null comment '用户id',
+    update_time datetime     not null comment '更新时间',
+    type        char(1)      not null default '1' comment '账单类型,月度账单还是年度账单,1阅读账单,2年度账单',
+    unique_flag varchar(12)  not null comment '账单周期的唯一标识,如年度账单2023,月度账单2023-03'
+)engine  innodb default charset utf8mb4 comment '顾客账单表';
+
+
+    -- ----------------------------
+    -- 20.任务清单表
+    -- ----------------------------
+create table t_order_task
+(
+    id                int primary key,
+    order_id          char(19)    not null comment '订单id',
+    employee_id       bigint      not null comment '负责此件的员工id',
+    employee_name     varchar(64) not null comment '负责此件的员工姓名',
+    unified_code      varchar(20) not null comment '负责此件的营业厅id',
+    status            char(1)     not null comment '任务状态,0新建,1已确认,2已揽收',
+    poster_phone      char(11)    not null comment '寄件人联系方式',
+    poster_name       varchar(64) not null comment '寄件人姓名',
+    confirm_weight    integer comment '营业员确认重量',
+    confirm_volume    integer comment '营业员确认体积',
+    confirm_post_cost integer comment '营业员实际确认的运费,允许和系统计算的运费有出入',
+    confirm_time      datetime comment '确认时间',
+    create_time       datetime comment '任务的创建时间'
+) engine innodb
+  default charset utf8mb4 comment '任务清单表';
+
+
+
+
+    -- ----------------------------
+    -- 21.待派件信息表
+    -- ----------------------------
+create table t_dispatch_order_info
+(
+    id               bigint primary key not null,
+    order_id         char(19)           not null comment '订单号id',
+    poster_name      varchar(64)        not null comment '寄件人姓名',
+    poster_phone     char(11)           not null comment '寄件人手机号',
+    receiver_name    varchar(64)        not null comment '收件人姓名',
+    receiver_phone   char(11)           not null comment '收件人手机号',
+    poster_address   varchar(64)        not null comment '寄件地址信息',
+    receiver_address varchar(64)        not null comment '收件地址,完整信息',
+    receiver_code    char(10)           not null comment '取件码',
+    status           char(1)            not null comment '签收状态,0未签收,1已签收',
+    notify_status    char(1)            not null comment '是否已经通知过取件,0失败,1已通知',
+    sign             blob comment '收件人签名,照片等信息',
+    confirm_time     datetime comment '签收时间',
+    unified_code     varchar(64)        not null comment '负责派件的营业网点的唯一id',
+    employee_id      bigint comment '负责此件的员工id',
+    employee_name    varchar(64) comment '负责此件的员工姓名'
+)engine innodb default charset utf8mb4 comment '待派件信息表';
+

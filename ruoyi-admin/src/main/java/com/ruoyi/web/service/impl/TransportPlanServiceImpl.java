@@ -8,6 +8,7 @@ import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.StringUtils;
 import com.ruoyi.system.service.ISysUserService;
+import com.ruoyi.web.constant.TransportStatusEnum;
 import com.ruoyi.web.domain.RoutePath;
 import com.ruoyi.web.domain.TransportPlan;
 import com.ruoyi.web.domain.TransportPlanDetail;
@@ -64,8 +65,10 @@ public class TransportPlanServiceImpl extends ServiceImpl<TransportPlanMapper, T
 		this.baseMapper.selectPage(page, query);
 		page.getRecords().stream()
 				.forEach(e -> {
-					RoutePath path = JSON.parseObject(new String(e.getRoutePath(), StandardCharsets.UTF_8), RoutePath.class);
-					e.setPath(path);
+					if (e.getRoutePath() != null && e.getRoutePath().length != 0) {
+						RoutePath path = JSON.parseObject(new String(e.getRoutePath(), StandardCharsets.UTF_8), RoutePath.class);
+						e.setPath(path);
+					}
 				});
 		return page.getRecords();
 	}
@@ -88,9 +91,9 @@ public class TransportPlanServiceImpl extends ServiceImpl<TransportPlanMapper, T
 		plan.setPlanStartTime(planVo.getLeaveTime());
 		plan.setPlanReachTime(planVo.getReachTime());
 		plan.setTerm(planVo.getTerm() + "");
-		plan.setStatus('1');
+		plan.setStatus(TransportStatusEnum.NEW.getCode());
 		TransportPlanDetail detail = new TransportPlanDetail();
-		detail.setCapacity(Long.valueOf(planVo.getCapacity()));
+		detail.setExpectCapacity(Long.valueOf(planVo.getCapacity()));
 		detail.setTransportType(planVo.getWay() + "");
 		detail.setExpectWeight(Long.valueOf(planVo.getWeight()));
 		// TODO 查询出员工信息来确定始发地
@@ -105,6 +108,7 @@ public class TransportPlanServiceImpl extends ServiceImpl<TransportPlanMapper, T
 		detail.setPlanCost(20000L);
 		boolean save = transportPlanDetailService.save(detail);
 		// TODO 待完善
+		plan.setDetailId(detail.getId());
 		return this.baseMapper.insert(plan) == 1 && save;
 	}
 
@@ -125,7 +129,7 @@ public class TransportPlanServiceImpl extends ServiceImpl<TransportPlanMapper, T
 		Date future = calendar.getTime();
 		LambdaQueryWrapper<TransportPlan> query = new LambdaQueryWrapper<>();
 		query.between(TransportPlan::getPlanStartTime, now, future)
-				.and(c -> c.eq(TransportPlan::getStatus, '1'));
+				.and(c -> c.eq(TransportPlan::getStatus, TransportStatusEnum.NEW.getCode()));
 		return this.baseMapper.selectList(query);
 	}
 
@@ -164,7 +168,7 @@ public class TransportPlanServiceImpl extends ServiceImpl<TransportPlanMapper, T
 		TransportPlan plan = null;
 		LambdaQueryWrapper<TransportPlan> query = new LambdaQueryWrapper<>();
 		query.eq(TransportPlan::getId, id)
-				.and(c -> c.eq(TransportPlan::getStatus, '2'));
+				.and(c -> c.eq(TransportPlan::getStatus, TransportStatusEnum.READY.getCode()));
 		plan = this.getOne(query);
 		Date now = Date.from(LocalDateTime.now().minusHours(5).atZone(ZoneId.systemDefault()).toInstant());
 		if (plan == null || plan.getPlanStartTime().before(now)) {
@@ -173,8 +177,29 @@ public class TransportPlanServiceImpl extends ServiceImpl<TransportPlanMapper, T
 		plan = new TransportPlan();
 		plan.setId(id);
 		plan.setRoutePath(bytes);
-		plan.setStatus('3');
+		plan.setStatus(TransportStatusEnum.ASSIGN_ROUTE_PATH.getCode());
 		this.updateById(plan);
+	}
+
+	/**
+	 * @return 所有已经分配过路线的运输计划信息
+	 */
+	@Override
+	public List<TransportPlan> queryRecentHadAssignedRoutePathPlans() {
+		LambdaQueryWrapper<TransportPlan> query = new LambdaQueryWrapper<>();
+		query.eq(TransportPlan::getStatus, TransportStatusEnum.ASSIGN_ROUTE_PATH.getCode());
+		return this.baseMapper.selectList(query);
+	}
+
+
+	@Override
+	public List<TransportPlan> queryAllReadyPlans() {
+		LambdaQueryWrapper<TransportPlan> query = new LambdaQueryWrapper<>();
+		query.eq(TransportPlan::getStatus, TransportStatusEnum.ASSIGN_ROUTE_PATH.getCode())
+				.or()
+				.eq(TransportPlan::getStatus, TransportStatusEnum.GONE.getCode())
+				.and(c -> c.le(TransportPlan::getPlanStartTime, new Date()));
+		return this.baseMapper.selectList(query);
 	}
 
 

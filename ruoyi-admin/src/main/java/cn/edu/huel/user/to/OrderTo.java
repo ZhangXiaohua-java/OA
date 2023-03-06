@@ -15,11 +15,9 @@ public class OrderTo {
 
 	private Integer volume;
 
-	private char code;
+	private Integer code;
 
 	private String employee;
-
-
 
 
 }

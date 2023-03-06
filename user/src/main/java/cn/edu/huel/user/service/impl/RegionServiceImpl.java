@@ -93,6 +93,19 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region> impleme
 	}
 
 
+	/**
+	 * @param regionCode 区县代码
+	 * @return 区县名字
+	 */
+	@Override
+	public String getNameByRegionCode(String regionCode) {
+		LambdaQueryWrapper<Region> query = new LambdaQueryWrapper<>();
+		query.eq(Region::getRegionCode, regionCode);
+		query.select(Region::getRegionName);
+		Region region = this.baseMapper.selectOne(query);
+		return region == null ? null : region.getRegionName();
+	}
+
 }
 
 

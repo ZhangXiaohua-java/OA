@@ -1,13 +1,18 @@
 package com.ruoyi.web.message;
 
 import cn.edu.huel.user.vo.OrderVO;
+import cn.hutool.core.lang.Snowflake;
+import cn.hutool.core.util.IdUtil;
 import com.alibaba.fastjson2.JSON;
 import com.ruoyi.common.core.domain.entity.SysDept;
 import com.ruoyi.common.core.domain.entity.SysUser;
 import com.ruoyi.system.service.ISysDeptService;
 import com.ruoyi.system.service.ISysUserService;
 import com.ruoyi.web.constant.RedisConstant;
+import com.ruoyi.web.domain.DispatchOrderInfo;
+import com.ruoyi.web.domain.OrderTask;
 import com.ruoyi.web.feign.FeignRemoteClient;
+import com.ruoyi.web.service.OrderTaskService;
 import com.ruoyi.web.to.OrderDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.core.Message;
@@ -20,6 +25,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -46,6 +52,12 @@ public class DispatchOrderMessageService {
 
 	@Resource
 	private ISysDeptService sysDeptService;
+
+
+	@Resource
+	private OrderTaskService orderTaskService;
+
+	private Snowflake snowflake = IdUtil.getSnowflake();
 
 	private ListOperations<String, Object> listOps;
 
@@ -74,10 +86,41 @@ public class DispatchOrderMessageService {
 		log.info("查询到的员工信息:{}", users);
 		SysUser sysUser = users.get(ThreadLocalRandom.current().nextInt(users.size()));
 		Long userId = sysUser.getUserId();
-		listOps.rightPush(RedisConstant.ASSIGN_TASK_PREFIX + userId, orderVO);
+		OrderTask orderTask = new OrderTask();
+		orderTask.setOrderId(orderVO.getOrderId());
+		orderTask.setEmployeeId(sysUser.getUserId());
+		orderTask.setEmployeeName(sysUser.getUserName());
+		orderTask.setUnifiedCode(unifiedCode);
+		orderTask.setStatus("0");
+		orderTask.setPosterPhone(orderVO.getPosterPhone());
+		orderTask.setPosterName(orderVO.getPosterName());
+		orderTask.setConfirmWeight(null);
+		orderTask.setConfirmVolume(null);
+		orderTask.setConfirmPostCost(null);
+		orderTask.setConfirmTime(null);
+		orderTask.setCreateTime(new Date());
+		orderTask.setId(snowflake.nextId());
+		orderTask.setRemark(orderVO.getRemark());
+		orderTask.setSourceCountCode(orderVO.getCountyCode());
+		orderTask.setAppointmentTime(orderVO.getAppointmentTime());
+		orderTask.setPosterDetailAddress(orderVO.getPostCode() + "," + orderVO.getDetailAddress());
+		orderTask.setReceiverInfo("收件人: " + orderVO.getReceiverName() + ",联系方式: " + orderVO.getReceiverPhone() + "收件地址: " + orderVO.getReceiveCode() + "," + orderVO.getDispatchDetailAddress());
+		orderTaskService.save(orderTask);
+		// 暂时取消掉Redis
+		//listOps.rightPush(RedisConstant.ASSIGN_TASK_PREFIX + userId, orderVO);
 	}
 
 
+	@RabbitListener(queues = {"dispatch.order.queue"})
+	public void consumerDispatchMessage(Message message) {
+		byte[] bytes = message.getBody();
+		String msg = new String(bytes, StandardCharsets.UTF_8);
+		ListOperations<String, Object> ios = redisTemplate.opsForList();
+		List<Object> list = ios.range(RedisConstant.ORDER_TRACE_RELATION + msg, 0, -1);
+		// TODO 通过feign查询订单详情,并将每一个订单封装成DispatchOrderInfo,然后修改订单的状态为派件中...
+		DispatchOrderInfo dispatchOrderInfo = new DispatchOrderInfo();
+
+	}
 
 
 }

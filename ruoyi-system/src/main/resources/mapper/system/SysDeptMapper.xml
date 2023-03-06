@@ -91,8 +91,8 @@
                d.email,
                d.status,
                d.count_code,
-               d.unified_code
-                   (select dept_name from sys_dept where dept_id = d.parent_id) parent_name
+               d.unified_code,
+               (select dept_name from sys_dept where dept_id = d.parent_id) parent_name
         from sys_dept d
         where d.dept_id = #{deptId}
     </select>

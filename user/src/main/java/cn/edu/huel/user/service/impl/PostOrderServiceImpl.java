@@ -2,11 +2,14 @@ package cn.edu.huel.user.service.impl;
 
 import cn.edu.huel.user.base.constant.OrderStatusEnum;
 import cn.edu.huel.user.base.utils.PostCostCounter;
+import cn.edu.huel.user.domain.OrderTrace;
 import cn.edu.huel.user.domain.PostOrder;
 import cn.edu.huel.user.mapper.PostOrderMapper;
 import cn.edu.huel.user.service.IAreaService;
+import cn.edu.huel.user.service.IOrderTraceService;
 import cn.edu.huel.user.service.IPostOrderService;
 import cn.edu.huel.user.to.OrderTo;
+import cn.edu.huel.user.to.TraceTo;
 import cn.edu.huel.user.vo.ConditionVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -20,6 +23,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -40,6 +44,10 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 
 	@Resource
 	private PostCostCounter postCostCounter;
+
+
+	@Resource
+	private IOrderTraceService orderTraceService;
 
 	/**
 	 * 创建订单信息
@@ -214,9 +222,18 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 	 */
 	@Override
 	public boolean updateOrderStatus(String orderId, OrderStatusEnum statusEnum) {
-		PostOrder order = new PostOrder();
-		order.setId(orderId);
-		order.setStatus(statusEnum.getCode());
+		PostOrder order = this.getById(orderId);
+		int pre = 0;
+		if (order.getStatus() > 10) {
+			pre = order.getStatus() - 10;
+			order = new PostOrder();
+			order.setId(orderId);
+			order.setStatus(pre);
+		} else {
+			order = new PostOrder();
+			order.setId(orderId);
+			order.setStatus(statusEnum.getCode());
+		}
 		return this.updateById(order);
 	}
 
@@ -250,6 +267,40 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 		String[] origin = order.getOrigin().split(",");
 		String[] dest = order.getDest().split(",");
 		return postCostCounter.countCost(order.getWeight(), origin[0], dest[0], order.getVolume());
+	}
+
+
+	/**
+	 * @param tos 数据
+	 * @return 批量更新订单关联的追踪信息
+	 */
+	@Override
+	public boolean batchUpdateOrderTraceInfo(List<TraceTo> tos) {
+		List<String> orderIds = tos.stream().map(e -> e.getOrderId()).collect(Collectors.toList());
+		List<PostOrder> list = this.listByIds(orderIds);
+		List<PostOrder> orders = tos.stream()
+				.map(e -> {
+					PostOrder order = new PostOrder();
+					order.setId(e.getOrderId());
+					order.setTraceId(e.getTraceId());
+					order.setStatus(OrderStatusEnum.POSTING.getCode());
+					// TODO  查询原始的订单的支付状态信息,如果是未支付的订单,则将该订单的状态值在原有基础上+10以表示是未支付的订单
+					list.stream().filter(ele -> ele.getId().equals(e.getOrderId()))
+							.findAny().ifPresent(consumer -> {
+								order.setStatus((order.getStatus() + 10));
+							});
+					return order;
+				}).collect(Collectors.toList());
+		List<OrderTrace> traceList = orders.stream().map(e -> {
+			OrderTrace trace = new OrderTrace();
+			trace.setTraceId(e.getTraceId());
+			trace.setOrderId(e.getId());
+			trace.setStatus('1');
+			trace.setUpdateTime(new Date());
+			return trace;
+		}).collect(Collectors.toList());
+		orderTraceService.saveBatch(traceList);
+		return this.updateBatchById(orders);
 	}
 
 

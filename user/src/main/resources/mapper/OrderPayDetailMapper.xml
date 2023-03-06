@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.edu.huel.user.mapper.OrderPayDetailMapper">
+
+    <resultMap id="BaseResultMap" type="cn.edu.huel.user.domain.OrderPayDetail">
+            <id property="id" column="id" jdbcType="INTEGER"/>
+            <result property="tradeNum" column="trade_num" jdbcType="VARCHAR"/>
+            <result property="type" column="type" jdbcType="CHAR"/>
+            <result property="payAccount" column="pay_account" jdbcType="VARCHAR"/>
+            <result property="amount" column="amount" jdbcType="DOUBLE"/>
+            <result property="receiveAccount" column="receive_account" jdbcType="VARCHAR"/>
+            <result property="payTime" column="pay_time" jdbcType="TIMESTAMP"/>
+            <result property="customerId" column="customer_id" jdbcType="CHAR"/>
+            <result property="status" column="status" jdbcType="CHAR"/>
+            <result property="delFlag" column="del_flag" jdbcType="CHAR"/>
+            <result property="billId" column="bill_id" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,trade_num,type,
+        pay_account,amount,receive_account,
+        pay_time,customer_id,status,
+        del_flag,bill_id
+    </sql>
+</mapper>

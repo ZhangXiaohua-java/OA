@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.web.mapper.DispatchOrderInfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.ruoyi.web.domain.DispatchOrderInfo">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="orderId" column="order_id" jdbcType="CHAR"/>
+        <result property="posterName" column="poster_name" jdbcType="VARCHAR"/>
+        <result property="posterPhone" column="poster_phone" jdbcType="CHAR"/>
+        <result property="receiverName" column="receiver_name" jdbcType="VARCHAR"/>
+        <result property="receiverPhone" column="receiver_phone" jdbcType="CHAR"/>
+        <result property="posterAddress" column="poster_address" jdbcType="VARCHAR"/>
+        <result property="receiverAddress" column="receiver_address" jdbcType="VARCHAR"/>
+        <result property="receiverCode" column="receiver_code" jdbcType="CHAR"/>
+        <result property="status" column="status" jdbcType="CHAR"/>
+        <result property="notifyStatus" column="notify_status" jdbcType="CHAR"/>
+        <result property="confirmTime" column="confirm_time" jdbcType="TIMESTAMP"/>
+        <result property="unifiedCode" column="unified_code" jdbcType="VARCHAR"/>
+        <result property="employeeId" column="employee_id" jdbcType="BIGINT"/>
+        <result property="employeeName" column="employee_name" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,order_id,poster_name,
+        poster_phone,receiver_name,receiver_phone,
+        poster_address,receiver_address,receiver_code,
+        status,notify_status,confirm_time,
+        unified_code,employee_id,employee_name,
+        sign
+    </sql>
+</mapper>

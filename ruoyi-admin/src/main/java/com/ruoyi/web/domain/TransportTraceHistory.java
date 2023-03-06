@@ -26,10 +26,6 @@ public class TransportTraceHistory implements Serializable {
      */
     private Integer planId;
 
-    /**
-     * 当前的转运场id
-     */
-    private Integer transferId;
 
     /**
      * 到达时间
@@ -40,6 +36,15 @@ public class TransportTraceHistory implements Serializable {
      * 离开时间
      */
     private Date leaveTime;
+
+
+    /*  当前站点信息 */
+    private String currentRegion;
+
+
+    /* 下一个站点信息 */
+    private String nextRegion;
+
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;

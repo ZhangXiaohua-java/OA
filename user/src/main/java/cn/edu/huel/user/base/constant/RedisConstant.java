@@ -16,5 +16,7 @@ public final class RedisConstant {
 	/* 订单支付token,用于防止重复提交 + 用户id */
 	public static final String PAY_TOKEN = "order:pay:";
 
+	public static final String TRACE_INFO_PREFIX = "trace:info:";
+
 
 }

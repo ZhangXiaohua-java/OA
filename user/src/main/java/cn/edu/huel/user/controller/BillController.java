@@ -3,8 +3,11 @@ package cn.edu.huel.user.controller;
 import cn.edu.huel.base.StringUtils;
 import cn.edu.huel.security.vo.Result;
 import cn.edu.huel.user.base.constant.RedisConstant;
+import cn.edu.huel.user.domain.CustomerBill;
 import cn.edu.huel.user.domain.PostOrder;
+import cn.edu.huel.user.service.CustomerBillService;
 import cn.edu.huel.user.service.IPostOrderService;
+import cn.edu.huel.user.vo.BillVo;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
@@ -29,6 +32,9 @@ public class BillController {
 
 	@Resource
 	private RedisTemplate<String, Object> redisTemplate;
+
+	@Resource
+	private CustomerBillService customerBillService;
 
 
 	@GetMapping("/list/orders")
@@ -69,6 +75,20 @@ public class BillController {
 		String url = "http://localhost:8000/ali/trade/pay?orderSn=" + orderId + "&pay=" + pay.toPlainString()
 				+ "&token=" + token + "&id=" + id;
 		return Result.ok().put("data", url);
+	}
+
+
+	@GetMapping("/term/year")
+	public Result queryTermOrder() {
+		CustomerBill bill = customerBillService.queryCustomerYearBill();
+		String customerId = (String) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		BigDecimal amount = customerBillService.queryAllUnpaiedAmount(customerId);
+		BillVo vo = new BillVo();
+		vo.setPay(amount == null ? "0.0" : amount.toPlainString());
+		vo.setAmount(bill.getAmount());
+		vo.setType(bill.getType());
+		vo.setUniqueFlag(bill.getUniqueFlag());
+		return Result.ok().put("data", vo);
 	}
 
 

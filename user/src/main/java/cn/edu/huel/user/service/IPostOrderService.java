@@ -3,6 +3,7 @@ package cn.edu.huel.user.service;
 import cn.edu.huel.user.base.constant.OrderStatusEnum;
 import cn.edu.huel.user.domain.PostOrder;
 import cn.edu.huel.user.to.OrderTo;
+import cn.edu.huel.user.to.TraceTo;
 import cn.edu.huel.user.vo.ConditionVo;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
@@ -116,4 +117,13 @@ public interface IPostOrderService extends IService<PostOrder> {
 	 * @return 返回计算的运费
 	 */
 	Integer countPostCost(String orderId);
+
+	/**
+	 *
+	 * @param tos 数据
+	 * @return 批量更新订单关联的追踪信息
+	 */
+	boolean batchUpdateOrderTraceInfo(List<TraceTo> tos);
+
+
 }

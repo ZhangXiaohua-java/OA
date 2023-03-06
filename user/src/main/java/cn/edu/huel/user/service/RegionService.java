@@ -15,6 +15,7 @@ public interface RegionService extends IService<Region> {
 
 	/**
 	 * 加载所有的省份信息
+	 *
 	 * @return
 	 */
 	List<Region> loadAllProvinces();
@@ -22,6 +23,7 @@ public interface RegionService extends IService<Region> {
 
 	/**
 	 * 查找该区域的所有一级子区域
+	 *
 	 * @param parentRegionId 父region id
 	 * @return
 	 */
@@ -29,18 +31,23 @@ public interface RegionService extends IService<Region> {
 
 
 	/**
-	 *
 	 * @param areaPath 查询城市代码
 	 * @return
 	 */
 	Long queryRegionCode(Long[] areaPath);
 
 	/**
-	 *
 	 * @param regionCode 区县代码
-	 * @return 纬度,精度
+	 * @return 纬度, 精度
 	 */
 	String queryLngAndLatByRegionCode(String regionCode);
+
+
+	/**
+	 * @param regionCode 区县代码
+	 * @return 区县名字
+	 */
+	String getNameByRegionCode(String regionCode);
 
 
 }

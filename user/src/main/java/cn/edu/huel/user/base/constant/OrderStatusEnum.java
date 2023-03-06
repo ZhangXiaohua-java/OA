@@ -7,35 +7,35 @@ package cn.edu.huel.user.base.constant;
 public enum OrderStatusEnum {
 
 	/* New新建,初始状态 */
-	NEW('1', "未支付订单"),
+	NEW(1, "未支付订单"),
 	/* 营业部已经确认 */
-	CONFIRMED('2', "营业部已接收订单"),
+	CONFIRMED(2, "营业部已接收订单"),
 
-	CREATED('3', "订单创建成功"),
+	CREATED(3, "订单创建成功"),
 
-	PAYED('4', "已完成订单支付"),
+	PAYED(4, "已完成订单支付"),
 
-	POSTING('5', "运输中"),
+	POSTING(5, "运输中"),
 
-	DISPATCHING('6', "派送中"),
+	DISPATCHING(6, "派送中"),
 
-	Finished('7', "已送达"),
+	Finished(7, "已送达"),
 
-	OVER('8', "订单已关闭"),
+	OVER(8, "订单已关闭"),
 
-	UNKNOWN('9', "无订单信息");
+	UNKNOWN(9, "无订单信息");
 
-	private char code;
+	private int code;
 
 	private String status;
 
-	OrderStatusEnum(char code, String status) {
+	OrderStatusEnum(int code, String status) {
 		this.code = code;
 		this.status = status;
 	}
 
 
-	public char getCode() {
+	public int getCode() {
 		return code;
 	}
 
@@ -43,25 +43,25 @@ public enum OrderStatusEnum {
 		return status;
 	}
 
-	public static OrderStatusEnum getInstanceByCode(char code) {
+	public static OrderStatusEnum getInstanceByCode(int code) {
 		switch (code) {
-			case '1':
+			case 1:
 				return NEW;
-			case '2':
+			case 2:
 				return CONFIRMED;
-			case '3':
+			case 3:
 				return CREATED;
-			case '4':
+			case 4:
 				return PAYED;
-			case '5':
+			case 5:
 				return POSTING;
-			case '6':
+			case 6:
 				return DISPATCHING;
-			case '7':
+			case 7:
 				return Finished;
-			case '8':
+			case 8:
 				return OVER;
-			case '9':
+			case 9:
 				return UNKNOWN;
 			default:
 				return null;
@@ -69,7 +69,7 @@ public enum OrderStatusEnum {
 	}
 
 	public static void main(String[] args) {
-		OrderStatusEnum statusEnum = OrderStatusEnum.getInstanceByCode('1');
+		OrderStatusEnum statusEnum = OrderStatusEnum.getInstanceByCode(1);
 		System.out.println(statusEnum.getStatus());
 	}
 

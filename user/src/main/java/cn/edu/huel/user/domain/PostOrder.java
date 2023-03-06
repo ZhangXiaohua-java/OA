@@ -83,7 +83,7 @@ public class PostOrder {
 	private String receiverPhone;
 
 	/* 订单状态,具体的表述见OrderStatusEnum */
-	private char status;
+	private Integer status;
 
 
 	/* 订单的创建者,信息有点多余了 */
@@ -96,6 +96,9 @@ public class PostOrder {
 
 	/* 物品的体积,用于核算运费 */
 	private Integer volume;
+
+	/*  对应着物流运输计划的id,方便追踪位置信息  */
+	private Integer traceId;
 
 
 }

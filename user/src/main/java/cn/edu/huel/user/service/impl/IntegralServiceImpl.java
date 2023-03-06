@@ -45,11 +45,11 @@ public class IntegralServiceImpl extends ServiceImpl<IntegralMapper, Integral> i
 			integral.setCustomerId(customerId);
 			integral.setUpdateTime(new Date());
 			integral.setOrderId(orderId);
-			integral.setId(IdUtil.nanoId());
+			integral.setId(IdUtil.getSnowflakeNextIdStr());
 			return this.baseMapper.insert(integral) == 1;
 		} else {
 			Integral newIntegral = new Integral();
-			newIntegral.setId(IdUtil.nanoId());
+			newIntegral.setId(IdUtil.getSnowflakeNextIdStr());
 			newIntegral.setCurrentIntegral(integral.getCurrentIntegral() + amount);
 			newIntegral.setCustomerId(customerId);
 			newIntegral.setOrderId(orderId);

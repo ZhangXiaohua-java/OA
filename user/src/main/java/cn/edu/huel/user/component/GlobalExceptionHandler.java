@@ -32,9 +32,9 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler
 	public Result defaultExceptionHandler(Throwable throwable) {
+		throwable.printStackTrace();
 		return Result.error(throwable.getMessage());
 	}
 
-	
 
 }

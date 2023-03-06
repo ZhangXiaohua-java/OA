@@ -48,4 +48,12 @@ public interface TransportPlanService extends IService<TransportPlan> {
 	void assignRoutePath(Integer id, byte[] bytes);
 
 
+	/**
+	 * @return 所有已经分配过路线的运输计划信息
+	 */
+	List<TransportPlan> queryRecentHadAssignedRoutePathPlans();
+
+	List<TransportPlan> queryAllReadyPlans();
+
+
 }
