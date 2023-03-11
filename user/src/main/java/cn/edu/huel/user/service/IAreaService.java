@@ -71,12 +71,16 @@ public interface IAreaService extends IService<Area> {
 
 
 	/**
-	 *
-	 * @param regionName 区域名
+	 * @param regionName       区域名
 	 * @param parentRegionName 父区域名,用来解决重名的区县问题
 	 * @return 经纬度细腻
 	 */
-	String queryLngAndLatByCountName(String regionName,String parentRegionName);
+	String queryLngAndLatByCountName(String regionName, String parentRegionName);
 
 
+	/**
+	 * @param origin 编码
+	 * @return 判断传入的编码是否是邮编, 如果不是则返回其对应的邮编
+	 */
+	String codeExists(String origin);
 }

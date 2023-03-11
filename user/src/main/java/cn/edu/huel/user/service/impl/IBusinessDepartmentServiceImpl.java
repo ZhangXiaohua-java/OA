@@ -24,9 +24,18 @@ public class IBusinessDepartmentServiceImpl extends ServiceImpl<BusinessDepartme
 	@Override
 	public List<BusinessDepartment> queryBusinessDepartmentsByCountyCode(Long countyCode) {
 		LambdaQueryWrapper<BusinessDepartment> query = new LambdaQueryWrapper<>();
-		query.eq(BusinessDepartment::getCountyCode,countyCode);
+		query.eq(BusinessDepartment::getCountyCode, countyCode);
 		return this.baseMapper.selectList(query);
 	}
 
+
+	@Override
+	public BusinessDepartment queryBsByUnifiedCode(String unifiedCode) {
+		LambdaQueryWrapper<BusinessDepartment> query = new LambdaQueryWrapper<>();
+		query.eq(BusinessDepartment::getUnifiedCode, unifiedCode);
+		query.select(BusinessDepartment::getName, BusinessDepartment::getCityName,
+				BusinessDepartment::getCountyCode);
+		return this.baseMapper.selectOne(query);
+	}
 
 }

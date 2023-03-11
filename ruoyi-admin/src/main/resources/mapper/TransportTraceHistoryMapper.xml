@@ -9,8 +9,8 @@
         <result property="planId" column="plan_id" jdbcType="INTEGER"/>
         <result property="reachTime" column="reach_time" jdbcType="TIMESTAMP"/>
         <result property="leaveTime" column="leave_time" jdbcType="TIMESTAMP"/>
-        <result property="currentRegion" column="current_region" jdbcType="CHAR"/>
-        <result property="nextRegion" column="next_region" jdbcType="CHAR"/>
+        <result property="currentRegion" column="current_region"/>
+        <result property="nextRegion" column="next_region"/>
     </resultMap>
 
     <sql id="Base_Column_List">

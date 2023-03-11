@@ -16,6 +16,9 @@
         <result property="loginDate" column="login_date"/>
         <result property="registerDate" column="register_date"/>
         <result property="level" column="level"/>
+        <result property="authStatus" column="auth_status" jdbcType="BOOLEAN"/>
+        <result property="authInfo" column="auth_info"/>
+        <result property="facialFeatures" column="facial_features" jdbcType="BLOB"/>
     </resultMap>
 
     <sql id="selectCustomerVo">
@@ -29,7 +32,10 @@
                login_ip,
                login_date,
                register_date,
-               level
+               level,
+               auth_status,
+               auth_info,
+               facial_features
         from t_customer
     </sql>
 

@@ -89,4 +89,15 @@ public class Customer {
 	private String level;
 
 
+	/* 认证状态 */
+	private boolean authStatus;
+
+
+	/* 身份证照片信息 */
+	private String authInfo;
+
+	/* 面部信息特征 */
+	private byte[] facialFeatures;
+
+
 }

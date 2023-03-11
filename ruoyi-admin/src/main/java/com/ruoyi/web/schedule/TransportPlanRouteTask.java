@@ -3,16 +3,12 @@ package com.ruoyi.web.schedule;
 import cn.edu.huel.user.to.TraceTo;
 import cn.hutool.core.io.FileUtil;
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.TypeReference;
 import com.ruoyi.common.utils.bean.BeanUtils;
 import com.ruoyi.web.constant.RedisConstant;
 import com.ruoyi.web.constant.TransportStatusEnum;
 import com.ruoyi.web.domain.*;
 import com.ruoyi.web.feign.FeignRemoteClient;
-import com.ruoyi.web.service.OrderTaskService;
-import com.ruoyi.web.service.TransportPlanDetailService;
-import com.ruoyi.web.service.TransportPlanService;
-import com.ruoyi.web.service.TransportTraceHistoryService;
+import com.ruoyi.web.service.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -89,6 +85,10 @@ public class TransportPlanRouteTask {
 	private RabbitTemplate rabbitTemplate;
 
 	private volatile DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+
+	@Resource
+	private TransferFactoryService transferFactoryService;
 
 	@Async("executor")
 	@Scheduled(cron = "0 * * * * ?")
@@ -335,6 +335,9 @@ public class TransportPlanRouteTask {
 		TransportTraceHistory preStep = null;
 		TransportTraceHistory history = null;
 		int interval = 0;
+		// plan.getOrigin() 410225
+		String origin = plan.getOrigin();
+		origin = origin.substring(0, origin.length() - 2).concat("00");
 		for (int i = 1; i <= count; i++) {
 			history = new TransportTraceHistory();
 			num = generateRandomNum(pre, cities.size() - 1);
@@ -346,8 +349,9 @@ public class TransportPlanRouteTask {
 			}
 			City city = cities.get(num);
 			history.setPlanId(plan.getId());
-			history.setCurrentRegion(preStep == null ? plan.getOrigin() : preStep.getNextRegion());
-			history.setNextRegion(city.getAdcode());
+			history.setCurrentRegion(preStep == null ? transferFactoryService.queryByRegionCode(origin).getId()
+					: preStep.getNextRegion());
+			history.setNextRegion(transferFactoryService.queryByRegionCode(city.getAdcode()).getId());
 			history.setReachTime(getTime(interval));
 			history.setLeaveTime(getTime(interval + 4));
 			preStep = history;
@@ -355,14 +359,23 @@ public class TransportPlanRouteTask {
 			interval += generateRandomNum(8, 24);
 			histories.add(history);
 		}
+		String dest = plan.getDestination();
+		dest = dest.substring(0, dest.length() - 2).concat("00");
+		history = new TransportTraceHistory();
+		history.setCurrentRegion(preStep.getNextRegion());
+		history.setNextRegion(transferFactoryService.queryByRegionCode(dest).getId());
+		history.setPlanId(plan.getId());
+		history.setReachTime(getTime(interval + 5));
+		history.setLeaveTime(getTime(interval + 9));
+		histories.add(history);
 		history = new TransportTraceHistory();
 		history.setPlanId(plan.getId());
-		history.setCurrentRegion(plan.getDestination());
-		LocalDateTime localDateTime = plan.getPlanReachTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
-		localDateTime = localDateTime.withHour(threadLocalRandom.nextInt(24));
-		localDateTime = localDateTime.withMinute(threadLocalRandom.nextInt(60));
-		Date reachTime = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
-		history.setReachTime(reachTime);
+		history.setCurrentRegion(transferFactoryService.queryByRegionCode(dest).getId());
+		//LocalDateTime localDateTime = plan.getPlanReachTime().toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+		//localDateTime = localDateTime.withHour(threadLocalRandom.nextInt(24));
+		//localDateTime = localDateTime.withMinute(threadLocalRandom.nextInt(60));
+		//Date reachTime = Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+		history.setReachTime(getTime(interval + 13));
 		histories.add(history);
 		transportTraceHistoryService.saveBatch(histories);
 		redisTemplate.opsForValue().set(RedisConstant.TRACE_INFO_PREFIX + plan.getId(), histories);
@@ -387,12 +400,9 @@ public class TransportPlanRouteTask {
 
 
 	public static void main(String[] args) {
-		File file = new File("D:\\appsdata\\temp\\test\\cities.json");
-		String res = FileUtil.readString(file, StandardCharsets.UTF_8);
-		List<City> cities = JSON.parseObject(res, new TypeReference<List<City>>() {
-		});
-		cities = cities.stream().distinct().collect(Collectors.toList());
-		System.out.println(cities);
+		String origin = "410225";
+		origin = origin.substring(0, origin.length() - 2).concat("00");
+		System.out.println(origin);
 	}
 
 

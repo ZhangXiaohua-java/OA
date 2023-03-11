@@ -17,7 +17,23 @@ public interface RegionMapper extends BaseMapper<Region> {
 
 	List<String> selectRegionCodeByAreaId(@Param("areaId") Long areaId);
 
+	/**
+	 * @return 全国所有的地级市信息
+	 */
+	List<Region> selectAllLocalCities();
+
+
+	/**
+	 *
+	 * @param parentRegionCode 低级市代码
+	 * @return 所有区县
+	 */
+	List<Region> selectChildCountsByParentRegionCode(@Param("parentRegionCode") String parentRegionCode);
+
+
+
 }
+
 
 
 

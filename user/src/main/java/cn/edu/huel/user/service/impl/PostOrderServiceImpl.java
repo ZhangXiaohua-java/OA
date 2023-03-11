@@ -10,22 +10,19 @@ import cn.edu.huel.user.service.IOrderTraceService;
 import cn.edu.huel.user.service.IPostOrderService;
 import cn.edu.huel.user.to.OrderTo;
 import cn.edu.huel.user.to.TraceTo;
+import cn.edu.huel.user.vo.Condition;
 import cn.edu.huel.user.vo.ConditionVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.ruoyi.common.utils.StringUtils;
 import jakarta.annotation.Resource;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ObjectUtils;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -57,6 +54,7 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 	 */
 	@Override
 	public boolean createOrder(PostOrder postOrder) {
+		postOrder.setUpdateTime(new Date());
 		int insert = this.baseMapper.insert(postOrder);
 		return insert == 1;
 	}
@@ -85,16 +83,32 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 	 * @return 查询到的用户订单
 	 */
 	@Override
-	public List<PostOrder> queryOrdersByCondition(ConditionVo conditionVo) {
-		Page<PostOrder> page = new Page<>(conditionVo.getPageNum(), conditionVo.getPageSize());
-		LambdaQueryWrapper<PostOrder> wrapper = new LambdaQueryWrapper<>();
-		wrapper.eq(!StringUtils.isEmpty(conditionVo.getCustomerId()),
-						PostOrder::getCustomerId, conditionVo.getCustomerId())
-				.and(!ObjectUtils.isEmpty(conditionVo.getRange()), (c) -> {
-					c.between(PostOrder::getOrderTime, conditionVo.getRange()[0], conditionVo.getRange()[1]);
+	@SuppressWarnings({"all"})
+	public Page<PostOrder> queryOrdersByCondition(Condition condition) {
+		UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
+		String customerId = (String) authentication.getPrincipal();
+		Page<PostOrder> page = new Page<>(condition.getPageNum(), condition.getPageSize());
+		LambdaQueryWrapper<PostOrder> query = new LambdaQueryWrapper<>();
+		query.eq(PostOrder::getCustomerId, customerId);
+		Optional.ofNullable(condition.getId())
+				.ifPresent(e -> {
+					if (!"".equals(e)) {
+						query.like(PostOrder::getReceiverName, e)
+								.or()
+								.like(PostOrder::getId, e)
+								.or()
+								.like(PostOrder::getReceiverPhone, e);
+					}
 				});
-		this.baseMapper.selectPage(page, wrapper);
-		return page.getRecords();
+		Optional.ofNullable(condition.getStatus())
+				.ifPresent(e -> {
+					query.and(c -> c.eq(PostOrder::getStatus, e));
+				});
+		Optional.ofNullable(condition.getDateRange())
+				.ifPresent(e -> {
+					query.and(ele -> ele.between(PostOrder::getOrderTime, e[0], e[1]));
+				});
+		return this.baseMapper.selectPage(page, query);
 	}
 
 
@@ -118,6 +132,7 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 				.map(e -> {
 					PostOrder order = new PostOrder();
 					order.setId(e);
+					order.setUpdateTime(new Date());
 					order.setStatus(orderStatusEnum.getCode());
 					if (needCountPrice) {
 						order.setPay(bigDecimal);
@@ -147,6 +162,7 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 		order.setVolume(to.getVolume());
 		Integer cost = postCostCounter.countCost(to.getWeight(), postOrder.getOrigin().split(",")[0], postOrder.getDest().split(",")[0], to.getVolume());
 		order.setPay(new BigDecimal(cost));
+		order.setUpdateTime(new Date());
 		return this.baseMapper.updateById(order) == 1;
 	}
 
@@ -178,11 +194,30 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 	 * @return
 	 */
 	@Override
-	public List<PostOrder> listRecentOrders(Page<PostOrder> page) {
+	public Page<PostOrder> listRecentOrders(Condition condition) {
+		Page<PostOrder> page = new Page<>((condition.getPageNum() - 1L) * condition.getPageSize(), condition.getPageSize());
 		UsernamePasswordAuthenticationToken authentication = (UsernamePasswordAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
 		String userId = (String) authentication.getPrincipal();
 		LambdaQueryWrapper<PostOrder> query = new LambdaQueryWrapper<>();
 		query.eq(PostOrder::getCustomerId, userId);
+		Optional.ofNullable(condition.getId())
+				.ifPresent(e -> {
+					if (!"".equals(e)) {
+						query.like(PostOrder::getReceiverName, e)
+								.or()
+								.like(PostOrder::getId, e)
+								.or()
+								.like(PostOrder::getReceiverPhone, e);
+					}
+				});
+		Optional.ofNullable(condition.getStatus())
+				.ifPresent(e -> {
+					query.and(c -> c.eq(PostOrder::getStatus, e));
+				});
+		Optional.ofNullable(condition.getDateRange())
+				.ifPresent(e -> {
+					query.and(ele -> ele.between(PostOrder::getOrderTime, e[0], e[1]));
+				});
 		this.baseMapper.selectPage(page, query);
 		List<PostOrder> list = page.getRecords();
 		list.stream()
@@ -194,7 +229,7 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 					name = areaService.getMergerNameByZipCode(info[0]);
 					e.setDest(name + " " + info[1]);
 				});
-		return list;
+		return page;
 	}
 
 	/**
@@ -234,6 +269,7 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 			order.setId(orderId);
 			order.setStatus(statusEnum.getCode());
 		}
+		order.setUpdateTime(new Date());
 		return this.updateById(order);
 	}
 
@@ -281,6 +317,7 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 		List<PostOrder> orders = tos.stream()
 				.map(e -> {
 					PostOrder order = new PostOrder();
+					order.setUpdateTime(new Date());
 					order.setId(e.getOrderId());
 					order.setTraceId(e.getTraceId());
 					order.setStatus(OrderStatusEnum.POSTING.getCode());
@@ -301,6 +338,51 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 		}).collect(Collectors.toList());
 		orderTraceService.saveBatch(traceList);
 		return this.updateBatchById(orders);
+	}
+
+	/**
+	 * @param traceId traceId
+	 * @return 订单详情
+	 */
+	@Override
+	public List<PostOrder> batchQueryOrderDetailAndUpdateStatus(Integer traceId) {
+		LambdaQueryWrapper<PostOrder> query = new LambdaQueryWrapper<>();
+		query.eq(PostOrder::getTraceId, traceId);
+		List<PostOrder> orders = this.baseMapper.selectList(query);
+		List<PostOrder> update = orders.stream().map(e -> {
+			PostOrder order = new PostOrder();
+			order.setUpdateTime(new Date());
+			order.setId(e.getId());
+			order.setStatus(OrderStatusEnum.DISPATCHING.getCode());
+			return order;
+		}).collect(Collectors.toList());
+		this.updateBatchById(update);
+		return orders;
+	}
+
+
+	/**
+	 * @param orderId 订单号
+	 * @return 修改订单状态为已结束
+	 */
+	@Override
+	public boolean confirmOrder(String orderId) {
+		LambdaUpdateWrapper<PostOrder> update = new LambdaUpdateWrapper<>();
+		update.eq(PostOrder::getId, orderId)
+				.ne(PostOrder::getStatus, OrderStatusEnum.Finished.getCode());
+		update.set(PostOrder::getStatus, OrderStatusEnum.Finished.getCode());
+		update.set(PostOrder::getUpdateTime, new Date());
+		return this.update(update);
+	}
+
+
+	/**
+	 * @param id 订单号
+	 * @return 根据订单号查询下单用户的手机号信息
+	 */
+	@Override
+	public String queryPhoneNumByOrderId(String id) {
+		return this.baseMapper.queryCustomerPhoneByOrderId(id);
 	}
 
 

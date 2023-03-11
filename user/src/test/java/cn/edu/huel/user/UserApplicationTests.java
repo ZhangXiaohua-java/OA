@@ -1,7 +1,7 @@
 package cn.edu.huel.user;
 
+import cn.edu.huel.user.config.AliOssConfig;
 import cn.edu.huel.user.domain.Area;
-import cn.edu.huel.user.domain.PostOrder;
 import cn.edu.huel.user.domain.ServiceSupportRange;
 import cn.edu.huel.user.service.IAreaService;
 import cn.edu.huel.user.service.IPostOrderService;
@@ -14,6 +14,10 @@ import cn.hutool.script.ScriptUtil;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.TypeReference;
+import com.aliyun.oss.OSS;
+import com.aliyun.oss.common.comm.ResponseMessage;
+import com.aliyun.oss.model.PutObjectRequest;
+import com.aliyun.oss.model.PutObjectResult;
 import jakarta.annotation.Resource;
 import org.junit.jupiter.api.Test;
 import org.springframework.amqp.core.*;
@@ -347,13 +351,30 @@ public class UserApplicationTests {
 	@Resource
 	private IPostOrderService orderService;
 
+	@Resource
+	private OSS oss;
+
+	@Resource
+	private AliOssConfig config;
+
 	@Test
-	public void update() {
-		PostOrder order = new PostOrder();
-		order.setId("1632242897527508992");
-		order.setStatus((char) 10);
-		boolean update = orderService.updateById(order);
-		System.out.println(update);
+	public void uploadFile() {
+		String filename = "oa/test.mp4";
+		PutObjectRequest request = new PutObjectRequest(config.getBucket(),filename,new File("D:\\data\\video\\obs\\2022-06-17_13-47-44.mp4"));
+		request.setProcess("true");
+		PutObjectResult result = oss.putObject(request);
+		ResponseMessage response = result.getResponse();
+		int statusCode = response.getStatusCode();
+		String uri = response.getUri();
+		System.out.println(statusCode);
+		System.out.println(uri);
+		String str = JSON.toJSONString(response);
+		System.out.println(str);
+
 	}
+
+
+
+
 
 }

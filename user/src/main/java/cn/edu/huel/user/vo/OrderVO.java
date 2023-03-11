@@ -2,6 +2,7 @@ package cn.edu.huel.user.vo;
 
 import cn.edu.huel.user.base.standard.CreateOrder;
 import cn.edu.huel.user.base.validator.PayTypeCheck;
+import cn.edu.huel.user.base.validator.TokenCheck;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -102,6 +103,11 @@ public class OrderVO {
 	/* 区域代码,用来替换之前的zipcode邮编,使用邮编表示地域过于局限... */
 	@NotNull(groups = {CreateOrder.class}, message = "城市代码不可为空")
 	private String countyCode;
+
+
+	/* 订单提交的唯一标识 */
+	@TokenCheck(message = "无效的订单请求", groups = {CreateOrder.class})
+	private String orderToken;
 
 
 }

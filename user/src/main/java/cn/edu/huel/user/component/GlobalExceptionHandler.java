@@ -1,9 +1,9 @@
 package cn.edu.huel.user.component;
 
 import cn.edu.huel.security.vo.Result;
+import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-	@ExceptionHandler({MethodArgumentNotValidException.class})
-	public Result validationExceptionHandler(MethodArgumentNotValidException exception) {
+	@ExceptionHandler({BindException.class})
+	public Result validationExceptionHandler(BindException exception) {
 		BindingResult bindingResult = exception.getBindingResult();
 		Map<String, Object> map = bindingResult.getFieldErrors()
 				.stream()
@@ -33,6 +33,7 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler
 	public Result defaultExceptionHandler(Throwable throwable) {
 		throwable.printStackTrace();
+		System.err.println(throwable.getClass().getName());
 		return Result.error(throwable.getMessage());
 	}
 

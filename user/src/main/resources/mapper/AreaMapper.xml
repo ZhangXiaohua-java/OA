@@ -43,5 +43,13 @@
                      where name = #{parentRegionName})
     </select>
 
+    <select id="selectAreaByNames" resultType="cn.edu.huel.user.domain.Area">
+        <include refid="selectAreaVo"/>
+        where name = #{regionName}
+        and pid = (select id
+        from t_area
+        where name = #{parentRegionName})
+    </select>
+
 
 </mapper>

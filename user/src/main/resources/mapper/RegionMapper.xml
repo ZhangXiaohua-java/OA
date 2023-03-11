@@ -27,4 +27,23 @@
     </select>
 
 
+    <select id="selectAllLocalCities" resultType="cn.edu.huel.user.domain.Region">
+        select region_id, region_name, region_short_name, region_code, region_parent_id, region_level
+        from sys_region
+        where region_parent_id
+            in (select region_id
+                from sys_region
+                where region_level = 1)
+          and (region_name like '%市' or region_name like '%州' or region_name like '%地区')
+    </select>
+
+
+    <select id="selectChildCountsByParentRegionCode" resultType="cn.edu.huel.user.domain.Region">
+        select region_id, region_name, region_short_name, region_code, region_parent_id, region_level
+        from sys_region
+        where region_parent_id =
+              (select region_id from sys_region where region_code = #{parentRegionCode})
+    </select>
+
+
 </mapper>

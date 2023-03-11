@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="cn.edu.huel.user.mapper.PostOrderMapper">
 
-    <resultMap type="cn.edu.huel.user.domain.PostOrder" id="PostOrderResult">
+    <resultMap type="cn.edu.huel.user.to.PostOrderTo" id="PostOrderResult">
         <result property="id" column="id"/>
         <result property="customerId" column="customer_id"/>
         <result property="pay" column="pay"/>
@@ -52,6 +52,12 @@
         from t_post_order
         where customer_id = #{customerId}
           and (status &lt; 4 or status &gt; 9)
+    </select>
+
+    <select id="queryCustomerPhoneByOrderId" resultType="java.lang.String">
+        select phone
+        from t_customer
+        where id = (select customer_id from t_post_order where t_post_order.id = #{id})
     </select>
 
 

@@ -15,11 +15,16 @@ public interface AreaMapper extends BaseMapper<Area> {
 
 
 	/**
-	 *
-	 * @param regionName 区县名
+	 * @param regionName       区县名
 	 * @param parentRegionName 父区域名字
 	 * @return 经纬度信息
 	 */
 	Area selectCountLngAndLatByName(@Param("regionName") String regionName, @Param("parentRegionName") String parentRegionName);
 
+	/**
+	 * @param regionName       当前区域名
+	 * @param parentRegionName 父区域名
+	 * @return 区域信息
+	 */
+	Area selectAreaByNames(@Param("regionName") String regionName, @Param("parentRegionName") String parentRegionName);
 }

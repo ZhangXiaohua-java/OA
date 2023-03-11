@@ -106,6 +106,51 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region> impleme
 		return region == null ? null : region.getRegionName();
 	}
 
+
+	/**
+	 * @return 全国所有的地级市信息
+	 */
+	@Override
+	public List<Region> listAllLevel2Cities() {
+		return this.baseMapper.selectAllLocalCities();
+	}
+
+
+	/***
+	 *
+	 * @param parentRegionCode 地级市代码
+	 * @return 该地级市下所有的区县
+	 */
+	@Override
+	public List<Region> listChildCounts(String parentRegionCode) {
+		return this.baseMapper.selectChildCountsByParentRegionCode(parentRegionCode);
+	}
+
+
+	/**
+	 * @param code 邮编
+	 * @return 根据区域编码查询区域信息
+	 */
+	@Override
+	public Region queryRegionByZipCode(String code) {
+		LambdaQueryWrapper<Region> query = new LambdaQueryWrapper<>();
+		query.eq(Region::getRegionCode, code);
+		return this.baseMapper.selectOne(query);
+	}
+
+
+	/**
+	 * @param code 区县编码
+	 * @return 查询上一级行政区信息
+	 */
+	@Override
+	public Region findParentRegionInfo(String code) {
+		LambdaQueryWrapper<Region> query = new LambdaQueryWrapper<>();
+		query.eq(Region::getRegionId, code);
+		return this.baseMapper.selectOne(query);
+	}
+	
+
 }
 
 

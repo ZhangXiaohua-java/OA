@@ -1,6 +1,7 @@
 package com.ruoyi.web.controller.transport;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.web.constant.RedisConstant;
 import com.ruoyi.web.domain.RoutePath;
@@ -8,6 +9,7 @@ import com.ruoyi.web.domain.TransportPlan;
 import com.ruoyi.web.feign.FeignRemoteClient;
 import com.ruoyi.web.service.TransportPlanService;
 import com.ruoyi.web.vo.ConditionVo;
+import com.ruoyi.web.vo.PageVo;
 import com.ruoyi.web.vo.TransportPlanVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -40,8 +42,10 @@ public class TransportPlanController {
 
 	@PostMapping("/query/plan")
 	public AjaxResult queryTransportPlans(@RequestBody ConditionVo conditionVo) {
-		List<TransportPlan> plans = transportPlanService.queryPlansByCondition(conditionVo);
-		return new AjaxResult(200, "ok").put("data", plans);
+		Page<TransportPlan> page = transportPlanService.queryPlansByCondition(conditionVo);
+		PageVo vo = PageVo.getPage(page);
+		return new AjaxResult(200, "ok").put("data", page.getRecords())
+				.put("page", vo);
 	}
 
 	@PostMapping("/create/plan")

@@ -32,4 +32,21 @@ public final class RedisConstant {
 	public static final String ORDER_TRACE_RELATION = "trace:order:";
 
 
+	/* 地级市信息key */
+	public static final String REGION_INFO_PREFIX = "region:info:";
+
+	/* 地级市的所有区县key  */
+	public static final String REGION_CHILD_INFO_PREFIX = "region:info:child:";
+
+	/* 省份信息 */
+	public static final String REGION_PROVINCE_INFO_PREFIX = "region:province:info:";
+
+
+	/* 转运场信息key */
+	public static final String TRANSFER_INFO_PREFIX = "transfer:factory:info:";
+
+
+	public static final String DISPATCH_ORDER_TOKEN_PREFIX = "order:token:";
+
+
 }

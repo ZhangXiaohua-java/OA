@@ -20,7 +20,11 @@
         <result property="unifiedCode" column="unified_code" jdbcType="VARCHAR"/>
         <result property="employeeId" column="employee_id" jdbcType="BIGINT"/>
         <result property="employeeName" column="employee_name" jdbcType="VARCHAR"/>
+        <result property="createTime" column="create_time"/>
+        <result property="sign" column="sign" jdbcType="VARCHAR"/>
     </resultMap>
+
+
 
     <sql id="Base_Column_List">
         id,order_id,poster_name,

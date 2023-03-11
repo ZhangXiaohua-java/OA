@@ -1,5 +1,6 @@
 package com.ruoyi;
 
+import com.ruoyi.web.schedule.TransferDataScript;
 import com.ruoyi.web.schedule.TransportPlanRouteTask;
 import com.ruoyi.web.service.TransferFactoryService;
 import lombok.extern.slf4j.Slf4j;
@@ -36,6 +37,9 @@ public class RuoYiApplication implements CommandLineRunner {
 	@Resource
 	private Executor executor;
 
+	@Resource
+	private TransferDataScript transferDataScript;
+
 
 	public static void main(String[] args) {
 		// System.setProperty("spring.devtools.restart.enabled", "false");
@@ -56,6 +60,7 @@ public class RuoYiApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		// TODO 异步线程池
+		//transferDataScript.setParentId();
 		log.info("开始执行运输计划的任务");
 	}
 

@@ -1,26 +1,35 @@
 package cn.edu.huel.user.vo;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 /**
  * @author 张晓华
- * @date 2023-2-28
+ * @date 2023-3-8
  */
+@AllArgsConstructor
 @Data
 public class PageVo {
 
-	private Integer pageNum;
+	/* 当前页码 */
+	private Long current;
 
-	private Integer pageSize;
+	/* 每页条目数 */
+	private Long size;
+
+	/* 总条目数 */
+	private Long total;
+
+	/* 总页数*/
+	private Long totalPages;
 
 
-	public Integer getPageNum() {
-		return pageNum == null ? 1 : pageNum;
+	public static PageVo getPage(Page page) {
+		return new PageVo(page.getCurrent(), page.getSize(), page.getTotal(), page.getPages());
 	}
 
-	public Integer getPageSize() {
-		return pageSize == null ? 10 : pageSize;
-	}
+
 
 
 }

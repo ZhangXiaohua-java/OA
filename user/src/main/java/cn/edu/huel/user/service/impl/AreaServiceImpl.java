@@ -2,14 +2,18 @@ package cn.edu.huel.user.service.impl;
 
 import cn.edu.huel.user.domain.Area;
 import cn.edu.huel.user.domain.PositionParam;
+import cn.edu.huel.user.domain.Region;
 import cn.edu.huel.user.mapper.AreaMapper;
 import cn.edu.huel.user.service.IAreaService;
+import cn.edu.huel.user.service.RegionService;
 import cn.edu.huel.user.vo.AreaVo;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -21,17 +25,14 @@ import java.util.stream.Collectors;
 @Service
 public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements IAreaService {
 
+	@Resource
+	private RegionService regionService;
+
 
 	@Override
 	public List<Area> fuzzySearchAreas(String keyword) {
 		LambdaQueryWrapper<Area> queryWrapper = new LambdaQueryWrapper<>();
-		queryWrapper.like(Area::getShortname, keyword)
-				.or()
-				.like(Area::getMergerName, keyword)
-				.or()
-				.like(Area::getName, keyword)
-				.or()
-				.like(Area::getPinyin, keyword);
+		queryWrapper.like(Area::getShortname, keyword).or().like(Area::getMergerName, keyword).or().like(Area::getName, keyword).or().like(Area::getPinyin, keyword);
 		return this.baseMapper.selectList(queryWrapper);
 	}
 
@@ -55,18 +56,12 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements IA
 		LambdaQueryWrapper<Area> wrapper = new LambdaQueryWrapper<>();
 		wrapper.select(Area::getId, Area::getShortname);
 		List<Area> areas = this.baseMapper.selectList(wrapper);
-		List<AreaVo> level1 = areas.stream()
-				.filter(e -> e.getPid().equals(0L))
-				.map(e -> new AreaVo(e.getId(), e.getShortname()))
-				.collect(Collectors.toList());
+		List<AreaVo> level1 = areas.stream().filter(e -> e.getPid().equals(0L)).map(e -> new AreaVo(e.getId(), e.getShortname())).collect(Collectors.toList());
 		return level1;
 	}
 
 	public void recursionFindChildren(List<Area> list, AreaVo areaVo) {
-		List<AreaVo> children = list.stream()
-				.filter(e -> e.getPid().equals(areaVo.getValue()))
-				.map(e -> new AreaVo(e.getId(), e.getShortname()))
-				.collect(Collectors.toList());
+		List<AreaVo> children = list.stream().filter(e -> e.getPid().equals(areaVo.getValue())).map(e -> new AreaVo(e.getId(), e.getShortname())).collect(Collectors.toList());
 		areaVo.setChildren(children);
 		children.forEach(e -> recursionFindChildren(list, e));
 	}
@@ -95,8 +90,7 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements IA
 	@Override
 	public String getMergerNameByZipCode(String zipcode) {
 		LambdaQueryWrapper<Area> query = new LambdaQueryWrapper<>();
-		query.eq(Area::getZipCode, zipcode)
-				.select(Area::getMergerName);
+		query.eq(Area::getZipCode, zipcode).select(Area::getMergerName);
 		return this.baseMapper.selectOne(query).getMergerName();
 	}
 
@@ -142,4 +136,38 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements IA
 	}
 
 
+	/**
+	 * @param origin 编码
+	 * @return 判断传入的编码是否是邮编, 如果不是则返回其对应的邮编
+	 */
+	@Override
+	public String codeExists(String origin) {
+		LambdaQueryWrapper<Area> query = new LambdaQueryWrapper<>();
+		query.eq(Area::getZipCode, origin);
+		Region region = null;
+		if (this.baseMapper.exists(query)) {
+			return origin;
+		} else {
+			region = regionService.queryRegionByZipCode(origin);
+			if (Objects.isNull(region)) {
+				return null;
+			} else {
+				query = new LambdaQueryWrapper<>();
+				query.eq(Area::getName, region.getRegionName());
+				// 存在同名的区县信息,如江北区,长安区...
+				List<Area> list = this.baseMapper.selectList(query);
+				if (Objects.isNull(list)) {
+					return null;
+				} else if (list.size() == 1) {
+					return list.get(0).getZipCode();
+				} else {
+					// 去重
+					Region parent = regionService.findParentRegionInfo(region.getRegionParentId());
+					String regionName = parent.getRegionName();
+					Area area = this.baseMapper.selectAreaByNames(region.getRegionName(), parent.getRegionName());
+					return area.getZipCode();
+				}
+			}
+		}
+	}
 }

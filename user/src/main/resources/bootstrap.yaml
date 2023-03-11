@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: user-service
+  cloud:
+    nacos:
+      config:
+        username: nacos
+        password: nacos
+        server-addr: 192.168.123.102:8848
+        file-extension: yaml
+        extension-configs[0]:
+          data-id: qiniu-config.yaml
+          refresh: true
+          group: DEFAULT_GROUP
+        extension-configs[1]:
+          data-id: ali-oos-config.yaml
+          refresh: true
+          group: DEFAULT_GROUP

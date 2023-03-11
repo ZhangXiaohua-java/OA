@@ -1,4 +1,4 @@
-package com.ruoyi.web.domain;
+package cn.edu.huel.user.domain;
 
 import lombok.Data;
 
@@ -36,11 +36,15 @@ public class TransportTraceHistory implements Serializable {
 
 
 	/*  当前站点信息 */
-	private String currentRegion;
-
+	private Integer currentRegion;
 
 	/* 下一个站点信息 */
-	private String nextRegion;
+	private Integer nextRegion;
+
+
+	private String preDescInfo;
+
+	private String nextDescInfo;
 
 	private static final long serialVersionUID = 1L;
 }

@@ -92,10 +92,17 @@ public class DispatchOrderInfo implements Serializable {
 	 */
 	private String employeeName;
 
+
+	/* 原始订单的下单时间 */
+	private Date orderTime;
+
+	/* 开始派件的时间 */
+	private Date createTime;
+
 	/**
 	 * 收件人签名,照片等信息
 	 */
-	private byte[] sign;
+	private String sign;
 
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;

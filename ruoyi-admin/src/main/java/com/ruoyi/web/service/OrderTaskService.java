@@ -1,8 +1,10 @@
 package com.ruoyi.web.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.web.constant.OrderTaskEnum;
 import com.ruoyi.web.domain.OrderTask;
+import com.ruoyi.web.vo.ConditionVo;
 
 import java.util.List;
 import java.util.Set;
@@ -18,13 +20,13 @@ public interface OrderTaskService extends IService<OrderTask> {
 	/**
 	 * @return 任务清单
 	 */
-	List<OrderTask> listEmployeeTasks();
+	Page<OrderTask> listEmployeeTasks(ConditionVo conditionVo);
 
 
 	/**
 	 * @return 带揽件的任务
 	 */
-	List<OrderTask> listOrdersToCollect();
+	Page<OrderTask> listOrdersToCollect(ConditionVo conditionVo);
 
 	/**
 	 * @param ids           订单号
@@ -41,14 +43,13 @@ public interface OrderTaskService extends IService<OrderTask> {
 	OrderTask queryTaskDetail(String orderId);
 
 	/**
-	 * @param orderId       订单号
-	 * @param weight        重量
-	 * @param volume 体积
+	 * @param orderId 订单号
+	 * @param weight  重量
+	 * @param volume  体积
 	 */
 	void updateTaskDetail(String orderId, Integer weight, Integer volume);
 
 	/**
-	 *
 	 * @param ids 订单号
 	 * @return 任务单
 	 */

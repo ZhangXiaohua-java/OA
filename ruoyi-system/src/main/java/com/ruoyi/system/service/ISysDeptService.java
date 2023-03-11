@@ -138,4 +138,12 @@ public interface ISysDeptService {
 	SysDept selectById(Long deptId);
 
 
+	/**
+	 * @param unifiedCode 部门的唯一识别号
+	 * @param countCode   区号
+	 * @return 查询营业部门
+	 */
+	SysDept selectDeptByUnifiedCode(String countCode, String unifiedCode);
+
+
 }

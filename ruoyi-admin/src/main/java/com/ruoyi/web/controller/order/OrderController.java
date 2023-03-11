@@ -1,6 +1,9 @@
 package com.ruoyi.web.controller.order;
 
 import cn.edu.huel.user.to.OrderTo;
+import cn.edu.huel.user.vo.Result;
+import com.alibaba.fastjson2.JSON;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.ruoyi.common.core.domain.AjaxResult;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.common.utils.bean.BeanUtils;
@@ -10,7 +13,9 @@ import com.ruoyi.web.controller.service.OrderService;
 import com.ruoyi.web.domain.OrderTask;
 import com.ruoyi.web.feign.FeignRemoteClient;
 import com.ruoyi.web.service.OrderTaskService;
+import com.ruoyi.web.vo.ConditionVo;
 import com.ruoyi.web.vo.OrderVo;
+import com.ruoyi.web.vo.PageVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.BoundSetOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -24,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 import java.util.stream.Collectors;
 
 /**
@@ -49,6 +55,9 @@ public class OrderController {
 	@Resource
 	private FeignRemoteClient remoteClient;
 
+	@Resource
+	private Executor executor;
+
 	private volatile DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	public static class OrderStatus {
@@ -67,14 +76,14 @@ public class OrderController {
 	 * @param pageSize 每页的数据条目数
 	 * @return
 	 */
-	@GetMapping("/task")
-	public AjaxResult listTasks(Integer pageNum, @RequestParam(required = false, defaultValue = "10") Integer pageSize) {
+	@PostMapping("/task")
+	public AjaxResult listTasks(@RequestBody ConditionVo conditionVo) {
 		AjaxResult ajaxResult = new AjaxResult(200, "ok");
 		LoginUser authentication = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Long userId = authentication.getUserId();
-		List<OrderTask> orderTasks = orderTaskService.listEmployeeTasks();
-		//List<OrderVO> vos = orderService.listTasks(userId, pageNum, pageSize);
-		return ajaxResult.put("data", orderTasks);
+		Page<OrderTask> page = orderTaskService.listEmployeeTasks(conditionVo);
+		PageVo vo = PageVo.getPage(page);
+		return ajaxResult.put("data", page.getRecords()).put("page", vo);
 	}
 
 
@@ -86,10 +95,7 @@ public class OrderController {
 	 */
 	@PostMapping("/confirm")
 	public AjaxResult confirmOrders(@RequestBody String[] orderIds) {
-		List<String> ids = Arrays.asList(orderIds)
-				.stream()
-				.distinct()
-				.collect(Collectors.toList());
+		List<String> ids = Arrays.asList(orderIds).stream().distinct().collect(Collectors.toList());
 		LoginUser principal = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		// 更新user服务中订单的状态
 		String res = remoteClient.batchUpdateOrderStatus(orderIds, OrderStatus.CONFIRMED);
@@ -98,8 +104,20 @@ public class OrderController {
 		log.info("远程服务的响应结果{}", res);
 		// 收件通知,将订单尾号后六位发送给员工即可
 		// TODO 自定义线程池,发送收件提醒信息
-		CompletableFuture.runAsync(() -> {
-			remoteClient.sendSms("19937656750", "123456");
+		ids.stream().forEach(e -> {
+			CompletableFuture.runAsync(() -> {
+				// TODO 根据订单号查询下单用户的手机号信息
+				// TODO 这里可能就是不同包导致的Json解析的bug
+				Result result = remoteClient.queryPhoneNum(e);
+				result = JSON.parseObject(JSON.toJSONString(result), Result.class);
+				if (result.getCode() != 200) {
+					log.warn("订单号为{}的手机号查询活动失败", e);
+					return;
+				}
+				String phone = (String) result.getData().get("data");
+				result = remoteClient.sendSms(phone, e.substring(13));
+				log.info("手机号为{}的通知短信的发送结果{}", phone, result);
+			}, executor);
 		});
 		boolean result = orderTaskService.batchUpdateTaskStatusByOrderIds(ids, OrderTaskEnum.CONFIRMED);
 		// 添加揽件任务
@@ -117,13 +135,13 @@ public class OrderController {
 	 * @return
 	 */
 	@GetMapping("/collect/list")
-	public AjaxResult listGoodsToCollect(@RequestParam(required = false, defaultValue = "1") Long pageNum,
-										 @RequestParam(required = false, defaultValue = "10") Long pageSize) {
+	public AjaxResult listGoodsToCollect(ConditionVo conditionVo) {
 		LoginUser authentication = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Long userId = authentication.getUserId();
-		List<OrderTask> tasks = orderTaskService.listOrdersToCollect();
+		Page<OrderTask> page = orderTaskService.listOrdersToCollect(conditionVo);
 		//List<OrderVO> vos = orderService.listOrdersToCollect(userId, pageNum, pageSize);
-		return new AjaxResult(200, "ok").put("data", tasks);
+		PageVo vo = PageVo.getPage(page);
+		return new AjaxResult(200, "ok").put("data", page.getRecords()).put("page", vo);
 	}
 
 	/**

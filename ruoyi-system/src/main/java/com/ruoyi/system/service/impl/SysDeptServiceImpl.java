@@ -326,4 +326,17 @@ public class SysDeptServiceImpl implements ISysDeptService {
 	}
 
 
+	/**
+	 * @param unifiedCode 部门的唯一识别号
+	 * @param countCode   区号
+	 * @return 查询营业部门
+	 */
+	@Override
+	public SysDept selectDeptByUnifiedCode(String countCode, String unifiedCode) {
+		return deptMapper.selectDeptByUnifiedCode(countCode, unifiedCode);
+	}
+
+
+
+
 }

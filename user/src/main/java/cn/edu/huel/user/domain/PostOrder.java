@@ -101,4 +101,8 @@ public class PostOrder {
 	private Integer traceId;
 
 
+	/* 订单信息的修改时间 */
+	private Date updateTime;
+
+
 }

@@ -3,6 +3,9 @@ package com.ruoyi.web.config;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.alibaba.fastjson.support.config.FastJsonConfig;
 import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
+import com.baomidou.mybatisplus.annotation.DbType;
+import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
+import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
 import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
@@ -34,14 +37,20 @@ public class WebConfig {
 	public HttpMessageConverter httpMessageConverter() {
 		FastJsonHttpMessageConverter messageConverter = new FastJsonHttpMessageConverter();
 		FastJsonConfig config = new FastJsonConfig();
-		config.setSerializerFeatures(SerializerFeature.WriteNullStringAsEmpty,
-				SerializerFeature.NotWriteRootClassName,
-				SerializerFeature.WriteMapNullValue,
-				SerializerFeature.WriteDateUseDateFormat);
+		config.setSerializerFeatures(SerializerFeature.WriteNullStringAsEmpty, SerializerFeature.NotWriteRootClassName, SerializerFeature.WriteMapNullValue, SerializerFeature.WriteDateUseDateFormat);
 		config.setDateFormat("yyyy-MM-dd HH:mm:ss");
 		messageConverter.setFastJsonConfig(config);
 		messageConverter.setSupportedMediaTypes(Collections.singletonList(MediaType.APPLICATION_JSON));
 		return messageConverter;
+	}
+
+	@Bean
+	public MybatisPlusInterceptor pageInterceptor() {
+		MybatisPlusInterceptor mybatisPlusInterceptor = new MybatisPlusInterceptor();
+		PaginationInnerInterceptor paginationInnerInterceptor = new PaginationInnerInterceptor();
+		paginationInnerInterceptor.setDbType(DbType.MYSQL);
+		mybatisPlusInterceptor.addInnerInterceptor(paginationInnerInterceptor);
+		return mybatisPlusInterceptor;
 	}
 
 

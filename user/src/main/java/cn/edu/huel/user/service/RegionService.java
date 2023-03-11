@@ -50,5 +50,31 @@ public interface RegionService extends IService<Region> {
 	String getNameByRegionCode(String regionCode);
 
 
+	/**
+	 * @return 全国所有的地级市信息
+	 */
+	List<Region> listAllLevel2Cities();
+
+	/***
+	 *
+	 * @param parentRegionCode 地级市代码
+	 * @return 该地级市下所有的区县
+	 */
+	List<Region> listChildCounts(String parentRegionCode);
+
+	/**
+	 * @param code 邮编
+	 * @return 根据区域编码查询区域信息
+	 */
+	Region queryRegionByZipCode(String code);
+
+
+	/**
+	 * @param code 区县编码
+	 * @return 查询上一级行政区信息
+	 */
+	Region findParentRegionInfo(String code);
+	
+
 }
 

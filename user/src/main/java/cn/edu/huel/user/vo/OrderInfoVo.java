@@ -1,9 +1,5 @@
 package cn.edu.huel.user.vo;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ruoyi.common.annotation.Excel;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -68,8 +64,7 @@ public class OrderInfoVo {
 	private String receiverPhone;
 
 	/* 订单状态,具体的表述见OrderStatusEnum */
-	private char status;
-
+	private Integer status;
 
 
 }

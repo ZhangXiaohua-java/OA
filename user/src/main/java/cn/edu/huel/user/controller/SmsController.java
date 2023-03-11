@@ -6,6 +6,7 @@ import cn.edu.huel.user.to.SmsTo;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -26,8 +27,11 @@ public class SmsController {
 	 * @return 发送短信
 	 */
 	@PostMapping("/order/notify")
-	public Result sendCollectGoodsSms(SmsTo smsTo) {
-		SmsTo sms = smsService.sendSms(smsTo);
+	public Result sendCollectGoodsSms(@RequestParam String mobile, @RequestParam String param) {
+		SmsTo to = new SmsTo();
+		to.setMobile(mobile);
+		to.setParam(param);
+		SmsTo sms = smsService.sendSms(to);
 		if (sms.isResult()) {
 			return Result.ok();
 		} else {

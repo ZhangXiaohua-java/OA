@@ -7,10 +7,7 @@ import cn.edu.huel.user.service.IBusinessDepartmentService;
 import cn.edu.huel.user.service.RegionService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -43,7 +40,11 @@ public class BusinessDepartmentController {
 	}
 
 
-
+	@GetMapping("/query/{unifiedCode}")
+	public Result queryBsInfoByUnifiedCode(@PathVariable String unifiedCode) {
+		BusinessDepartment businessDepartment = businessDepartmentService.queryBsByUnifiedCode(unifiedCode);
+		return Result.ok().put("data", businessDepartment);
+	}
 
 
 }

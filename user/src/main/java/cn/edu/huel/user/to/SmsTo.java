@@ -2,12 +2,14 @@ package cn.edu.huel.user.to;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 /**
  * @author 张晓华
  * @date 2023-2-28
  */
 @AllArgsConstructor
+@NoArgsConstructor
 @Data
 public class SmsTo {
 

@@ -1,5 +1,6 @@
 package com.ruoyi.web.service;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.ruoyi.web.domain.TransportPlan;
 import com.ruoyi.web.vo.ConditionVo;
@@ -19,7 +20,7 @@ public interface TransportPlanService extends IService<TransportPlan> {
 	 * @param conditionVo 查询条件
 	 * @return 根据查询条件查询信息
 	 */
-	List<TransportPlan> queryPlansByCondition(ConditionVo conditionVo);
+	Page<TransportPlan> queryPlansByCondition(ConditionVo conditionVo);
 
 	/**
 	 * @param planVo 运输计划详情

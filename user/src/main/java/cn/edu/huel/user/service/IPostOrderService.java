@@ -4,7 +4,7 @@ import cn.edu.huel.user.base.constant.OrderStatusEnum;
 import cn.edu.huel.user.domain.PostOrder;
 import cn.edu.huel.user.to.OrderTo;
 import cn.edu.huel.user.to.TraceTo;
-import cn.edu.huel.user.vo.ConditionVo;
+import cn.edu.huel.user.vo.Condition;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -42,10 +42,10 @@ public interface IPostOrderService extends IService<PostOrder> {
 	/**
 	 * 根据条件查询订单
 	 *
-	 * @param conditionVo 条件vo
+	 * @param condition 条件vo
 	 * @return 查询到的用户订单
 	 */
-	List<PostOrder> queryOrdersByCondition(ConditionVo conditionVo);
+	Page<PostOrder> queryOrdersByCondition(Condition condition);
 
 
 	/**
@@ -80,10 +80,10 @@ public interface IPostOrderService extends IService<PostOrder> {
 	/**
 	 * 查询用户的最近订单
 	 *
-	 * @param page 分页信息
+	 * @param condition 查询条件
 	 * @return
 	 */
-	List<PostOrder> listRecentOrders(Page<PostOrder> page);
+	Page<PostOrder> listRecentOrders(Condition condition);
 
 
 	/**
@@ -119,11 +119,31 @@ public interface IPostOrderService extends IService<PostOrder> {
 	Integer countPostCost(String orderId);
 
 	/**
-	 *
 	 * @param tos 数据
 	 * @return 批量更新订单关联的追踪信息
 	 */
 	boolean batchUpdateOrderTraceInfo(List<TraceTo> tos);
 
+
+	/**
+	 * @param traceId traceId
+	 * @return 订单详情
+	 */
+	List<PostOrder> batchQueryOrderDetailAndUpdateStatus(Integer traceId);
+
+
+	/**
+	 * @param orderId 订单号
+	 * @return 修改订单状态为已结束
+	 */
+	boolean confirmOrder(String orderId);
+
+
+	/**
+	 * @param id 订单号
+	 * @return 根据订单号查询下单用户的手机号信息
+	 */
+	String queryPhoneNumByOrderId(String id);
+	
 
 }

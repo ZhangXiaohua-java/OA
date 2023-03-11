@@ -16,11 +16,16 @@ public interface PostOrderMapper extends BaseMapper<PostOrder> {
 
 
 	/**
-	 *
 	 * @param customerId 顾客id
 	 * @return 未支付金额
 	 */
 	BigDecimal selectUnpaiedAmount(@Param("customerId") String customerId);
 
+
+	/**
+	 * @param id 订单号
+	 * @return 手机号
+	 */
+	String queryCustomerPhoneByOrderId(@Param("id") String id);
 
 }

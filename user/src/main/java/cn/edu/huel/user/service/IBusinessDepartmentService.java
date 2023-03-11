@@ -19,5 +19,6 @@ public interface IBusinessDepartmentService extends IService<BusinessDepartment>
 	List<BusinessDepartment> queryBusinessDepartmentsByCountyCode(Long countyCode);
 
 
-
+	BusinessDepartment queryBsByUnifiedCode(String unifiedCode);
+	
 }

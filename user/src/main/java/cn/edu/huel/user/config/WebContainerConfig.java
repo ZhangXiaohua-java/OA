@@ -9,6 +9,7 @@ import com.alibaba.fastjson.support.spring.FastJsonHttpMessageConverter;
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;
 import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor;
+import com.qiniu.storage.Region;
 import feign.codec.Decoder;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.springframework.beans.BeansException;
@@ -162,6 +163,22 @@ public class WebContainerConfig {
 		return HttpClient.getHttpClient();
 	}
 
+
+	//@Bean
+	//public com.qiniu.storage.Configuration configuration() {
+	//	return new com.qiniu.storage.Configuration(Region.huadong());
+	//}
+
+	//@Bean
+	//public UploadManager uploadManager(com.qiniu.storage.Configuration configuration) {
+	//	return new UploadManager(configuration);
+	//}
+	//
+	//@Bean
+	//public Auth auth(QiNiuConfig qiNiuConfig) {
+	//	return Auth.create(qiNiuConfig.getKey(), qiNiuConfig.getSecurity());
+	//}
+	//
 
 
 }

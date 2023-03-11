@@ -2,18 +2,18 @@ package com.ruoyi.web.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.ruoyi.common.core.domain.model.LoginUser;
 import com.ruoyi.web.constant.OrderTaskEnum;
 import com.ruoyi.web.domain.OrderTask;
 import com.ruoyi.web.mapper.OrderTaskMapper;
 import com.ruoyi.web.service.OrderTaskService;
+import com.ruoyi.web.vo.ConditionVo;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author ZhangXiaoHua
@@ -26,12 +26,25 @@ public class OrderTaskServiceImpl extends ServiceImpl<OrderTaskMapper, OrderTask
 
 
 	@Override
-	public List<OrderTask> listEmployeeTasks() {
+	public Page<OrderTask> listEmployeeTasks(ConditionVo conditionVo) {
+		Page<OrderTask> page = new Page<>((conditionVo.getPageNum() - 1L) * conditionVo.getPageSize(), conditionVo.getPageSize());
 		LambdaQueryWrapper<OrderTask> query = new LambdaQueryWrapper<>();
 		LoginUser user = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		query.eq(OrderTask::getEmployeeId, user.getUserId())
 				.eq(OrderTask::getStatus, OrderTaskEnum.NEW.getCode());
-		return this.baseMapper.selectList(query);
+		Optional.ofNullable(conditionVo.getId())
+				.ifPresent(e -> {
+					query.eq(OrderTask::getOrderId, e)
+							.or()
+							.like(OrderTask::getPosterName, e);
+				});
+		Optional.ofNullable(conditionVo.getDateRange())
+				.ifPresent(e -> {
+					query.and(c -> {
+						c.between(OrderTask::getCreateTime, e[0], e[1]);
+					});
+				});
+		return this.baseMapper.selectPage(page, query);
 	}
 
 
@@ -39,13 +52,26 @@ public class OrderTaskServiceImpl extends ServiceImpl<OrderTaskMapper, OrderTask
 	 * @return 带揽件的任务
 	 */
 	@Override
-	public List<OrderTask> listOrdersToCollect() {
+	public Page<OrderTask> listOrdersToCollect(ConditionVo conditionVo) {
+		Page<OrderTask> page = new Page<>((conditionVo.getPageNum() - 1L) * conditionVo.getPageSize(), conditionVo.getPageSize());
 		LoginUser authentication = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		Long userId = authentication.getUserId();
 		LambdaQueryWrapper<OrderTask> query = new LambdaQueryWrapper<>();
-		query.eq(OrderTask::getEmployeeId, userId)
-				.eq(OrderTask::getStatus, OrderTaskEnum.CONFIRMED.getCode());
-		return this.baseMapper.selectList(query);
+		if (Objects.nonNull(conditionVo.getId())) {
+			query.like(OrderTask::getOrderId, conditionVo.getId())
+					.or().like(OrderTask::getPosterName, conditionVo.getId())
+					.or().like(OrderTask::getPosterPhone, conditionVo.getId());
+		}
+		Optional.ofNullable(conditionVo.getDateRange())
+				.ifPresent(e -> {
+					query.between(OrderTask::getAppointmentTime, e[0], e[1]);
+				});
+		Optional.ofNullable(conditionVo.getStatus())
+				.ifPresent(e -> {
+					query.eq(OrderTask::getStatus, e);
+				});
+		query.eq(OrderTask::getEmployeeId, userId);
+		return this.baseMapper.selectPage(page, query);
 	}
 
 

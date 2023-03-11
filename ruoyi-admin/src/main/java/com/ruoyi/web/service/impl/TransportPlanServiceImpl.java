@@ -54,7 +54,7 @@ public class TransportPlanServiceImpl extends ServiceImpl<TransportPlanMapper, T
 	 * @return 根据查询条件查询信息
 	 */
 	@Override
-	public List<TransportPlan> queryPlansByCondition(ConditionVo conditionVo) {
+	public Page<TransportPlan> queryPlansByCondition(ConditionVo conditionVo) {
 		LambdaQueryWrapper<TransportPlan> query = new LambdaQueryWrapper<>();
 		query.eq(!StringUtils.isEmpty(conditionVo.getId()), TransportPlan::getId, conditionVo.getId());
 		if (conditionVo.getRange() != null && conditionVo.getRange().length > 1) {
@@ -70,7 +70,7 @@ public class TransportPlanServiceImpl extends ServiceImpl<TransportPlanMapper, T
 						e.setPath(path);
 					}
 				});
-		return page.getRecords();
+		return page;
 	}
 
 

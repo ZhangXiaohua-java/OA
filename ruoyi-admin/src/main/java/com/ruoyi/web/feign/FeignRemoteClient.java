@@ -3,6 +3,7 @@ package com.ruoyi.web.feign;
 import cn.edu.huel.user.domain.Outlets;
 import cn.edu.huel.user.to.OrderTo;
 import cn.edu.huel.user.to.TraceTo;
+import cn.edu.huel.user.vo.Result;
 import com.ruoyi.web.to.LoginInfo;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -40,7 +41,7 @@ public interface FeignRemoteClient {
 
 
 	@PostMapping("/sms/order/notify")
-	String sendSms(@RequestParam("mobile") String mobile, @RequestParam("param") String param);
+	Result sendSms(@RequestParam("mobile") String mobile, @RequestParam("param") String param);
 
 
 	/**
@@ -61,6 +62,26 @@ public interface FeignRemoteClient {
 
 	@PostMapping("/order/association/trace")
 	String associationOrderWithRoutePath(@RequestBody List<TraceTo> tos);
+
+
+	@PostMapping("/order/dispatch/{id}")
+	String dispatchOrder(@PathVariable("id") Integer id);
+
+
+	/**
+	 * @param id 订单号
+	 * @return 更新订单状态为已结束
+	 */
+	@PostMapping("/order/confirm/dispatch/{id}")
+	Result orderOver(@PathVariable("id") Long id);
+
+
+	/**
+	 * @param id 订单号
+	 * @return 下单顾客的手机号
+	 */
+	@GetMapping("/order/query/phone/{id}")
+	Result queryPhoneNum(@PathVariable("id") String id);
 
 
 }

@@ -113,6 +113,7 @@ public class MyBatisConfig
         return resources.toArray(new Resource[resources.size()]);
     }
 
+
     //@Bean
     //public SqlSessionFactory sqlSessionFactory(DataSource dataSource) throws Exception
     //{

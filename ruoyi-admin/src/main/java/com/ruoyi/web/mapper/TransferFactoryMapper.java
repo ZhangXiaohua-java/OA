@@ -11,6 +11,7 @@ import com.ruoyi.web.domain.TransferFactory;
  */
 public interface TransferFactoryMapper extends BaseMapper<TransferFactory> {
 
+
 }
 
 
