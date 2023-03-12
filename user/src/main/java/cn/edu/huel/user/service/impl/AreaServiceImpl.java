@@ -170,4 +170,26 @@ public class AreaServiceImpl extends ServiceImpl<AreaMapper, Area> implements IA
 			}
 		}
 	}
+
+
+	/**
+	 * @param zipCode 城市邮编
+	 * @return 城市编码
+	 */
+	@Override
+	public String queryRegionCodeByZipCode(String zipCode) {
+		return regionService.queryRegionByZipCode(zipCode).getRegionCode();
+	}
+
+
+	/**
+	 * @param zipCode 邮编
+	 * @return 返回父区域的信息
+	 */
+	@Override
+	public Area queryParentAreaInfo(String zipCode) {
+		return this.baseMapper.selectParentInfoByZipcode(zipCode);
+	}
+
+
 }

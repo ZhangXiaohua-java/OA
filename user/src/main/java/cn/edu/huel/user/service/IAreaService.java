@@ -83,4 +83,19 @@ public interface IAreaService extends IService<Area> {
 	 * @return 判断传入的编码是否是邮编, 如果不是则返回其对应的邮编
 	 */
 	String codeExists(String origin);
+
+	/**
+	 * @param zipCode 城市邮编
+	 * @return 城市编码
+	 */
+	String queryRegionCodeByZipCode(String zipCode);
+
+
+	/**
+	 * @param zipCode 邮编
+	 * @return 返回父区域的信息
+	 */
+	Area queryParentAreaInfo(String zipCode);
+	
+
 }

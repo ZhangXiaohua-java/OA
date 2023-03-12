@@ -5,11 +5,15 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.ruoyi.common.core.domain.entity.SysDept;
+import com.ruoyi.common.core.domain.model.LoginUser;
+import com.ruoyi.system.service.ISysDeptService;
 import com.ruoyi.web.domain.DispatchOrderInfo;
 import com.ruoyi.web.feign.FeignRemoteClient;
 import com.ruoyi.web.mapper.DispatchOrderInfoMapper;
 import com.ruoyi.web.service.DispatchOrderInfoService;
 import com.ruoyi.web.vo.ConditionVo;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -22,12 +26,14 @@ import java.util.Optional;
  * @createDate 2023-03-06 20:18:34
  */
 @Service
-public class DispatchOrderInfoServiceImpl extends ServiceImpl<DispatchOrderInfoMapper, DispatchOrderInfo>
-		implements DispatchOrderInfoService {
+public class DispatchOrderInfoServiceImpl extends ServiceImpl<DispatchOrderInfoMapper, DispatchOrderInfo> implements DispatchOrderInfoService {
 
 
 	@Resource
 	private FeignRemoteClient feignRemoteClient;
+
+	@Resource
+	private ISysDeptService sysDeptService;
 
 
 	/**
@@ -49,22 +55,20 @@ public class DispatchOrderInfoServiceImpl extends ServiceImpl<DispatchOrderInfoM
 	 */
 	@Override
 	public Page<DispatchOrderInfo> queryAllDispatchOrders(ConditionVo conditionVo) {
+		LoginUser loginUser = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Long deptId = loginUser.getUser().getDeptId();
+		SysDept sysDept = sysDeptService.selectDeptById(deptId);
 		Page<DispatchOrderInfo> page = new Page<>((conditionVo.getPageNum() - 1L) * conditionVo.getPageSize(), conditionVo.getPageSize());
 		LambdaQueryWrapper<DispatchOrderInfo> query = new LambdaQueryWrapper<>();
-		Optional.ofNullable(conditionVo.getId())
-				.ifPresent(e -> {
-					if (!"".equals(e)) {
-						query.like(DispatchOrderInfo::getOrderId, e)
-								.or()
-								.like(DispatchOrderInfo::getReceiverPhone, e)
-								.or()
-								.like(DispatchOrderInfo::getReceiverName, e);
-					}
-				});
-		Optional.ofNullable(conditionVo.getDateRange())
-				.ifPresent(e -> {
-					query.and(ele -> ele.between(DispatchOrderInfo::getCreateTime, e[0], e[1]));
-				});
+		query.eq(DispatchOrderInfo::getUnifiedCode, sysDept.getUnifiedCode());
+		Optional.ofNullable(conditionVo.getId()).ifPresent(e -> {
+			if (!"".equals(e)) {
+				query.like(DispatchOrderInfo::getOrderId, e).or().like(DispatchOrderInfo::getReceiverPhone, e).or().like(DispatchOrderInfo::getReceiverName, e);
+			}
+		});
+		Optional.ofNullable(conditionVo.getDateRange()).ifPresent(e -> {
+			query.and(ele -> ele.between(DispatchOrderInfo::getCreateTime, e[0], e[1]));
+		});
 		return this.baseMapper.selectPage(page, query);
 	}
 
@@ -76,15 +80,17 @@ public class DispatchOrderInfoServiceImpl extends ServiceImpl<DispatchOrderInfoM
 	@Override
 	public boolean confirmOrder(String orderId) {
 		LambdaUpdateWrapper<DispatchOrderInfo> update = new LambdaUpdateWrapper<>();
-		update.eq(DispatchOrderInfo::getOrderId, orderId)
-				.eq(DispatchOrderInfo::getStatus, "0");
+		update.eq(DispatchOrderInfo::getOrderId, orderId).eq(DispatchOrderInfo::getStatus, "0");
 		update.set(DispatchOrderInfo::getStatus, "1");
 		update.set(DispatchOrderInfo::getConfirmTime, new Date());
 		boolean res = this.update(update);
+		LoginUser user = (LoginUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		String userName = user.getUser().getUserName();
+		Long userId = user.getUser().getUserId();
 		Result result = null;
 		if (res) {
 			// TODO 发起远程调用更新订单状态为已结束
-			result = feignRemoteClient.orderOver(Long.valueOf(orderId));
+			result = feignRemoteClient.orderOver(Long.valueOf(orderId), userName, userId + "");
 		}
 		return res && result.getCode() == 200;
 	}
@@ -97,8 +103,7 @@ public class DispatchOrderInfoServiceImpl extends ServiceImpl<DispatchOrderInfoM
 	@Override
 	public void saveSignInfo(String url, String orderId) {
 		LambdaUpdateWrapper<DispatchOrderInfo> update = new LambdaUpdateWrapper<>();
-		update.eq(DispatchOrderInfo::getOrderId, orderId)
-				.eq(DispatchOrderInfo::getStatus, "1");
+		update.eq(DispatchOrderInfo::getOrderId, orderId).eq(DispatchOrderInfo::getStatus, "1");
 		update.set(DispatchOrderInfo::getSign, url);
 	}
 

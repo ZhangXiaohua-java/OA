@@ -105,4 +105,8 @@ public class PostOrder {
 	private Date updateTime;
 
 
+	/* 收货地址的详细标识信息 */
+	private String poiCode;
+	
+
 }

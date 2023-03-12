@@ -109,5 +109,8 @@ public class OrderVO {
 	@TokenCheck(message = "无效的订单请求", groups = {CreateOrder.class})
 	private String orderToken;
 
+	@NotNull(message = "无效的收货地址信息", groups = {CreateOrder.class})
+	private String poiCode;
+
 
 }

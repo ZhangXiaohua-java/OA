@@ -46,5 +46,14 @@
         from t_business_department
     </sql>
 
+    <select id="selectBsByPosition" resultType="cn.edu.huel.user.domain.BusinessDepartment">
+        SELECT *
+        FROM t_business_department
+        WHERE (6378.137 * 2 * ASIN(SQRT(POW(SIN(((#{lat} - latitude) * PI() / 180) / 2), 2) +
+                                        COS(#{lat} * PI() / 180) * COS(latitude * PI() / 180) *
+                                        POW(SIN(((#{lng} - longitude) * PI() / 180) / 2), 2))))
+                  &lt; 10
+    </select>
+
 
 </mapper>

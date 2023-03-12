@@ -71,8 +71,9 @@ public class OrderConsumer {
 			postOrder.setReceiverPhone(orderVO.getReceiverPhone());
 			postOrder.setOrigin(orderVO.getPosterZipCode() + "," + orderVO.getDetailAddress());
 			postOrder.setDest(orderVO.getReceiveZipCode() + "," + orderVO.getDispatchDetailAddress());
+			postOrder.setPoiCode(orderVO.getPoiCode());
 			// TODO 字典表
-			postOrder.setGoodsType(1L);
+			postOrder.setGoodsType(Long.valueOf(orderVO.getGoodsName()));
 			orderService.createOrder(postOrder);
 			// TODO MQ给系统交换机发送消息请求分配订单,只需要发送一个订单号和详细的地理位置信息即可
 			OrderDTO dto = new OrderDTO();

@@ -248,8 +248,8 @@ public class PostOrderController extends BaseController {
 	 * @return 更新订单状态为已结束
 	 */
 	@PostMapping("/confirm/dispatch/{id}")
-	public Result orderOver(@PathVariable Long id) {
-		boolean res = orderService.confirmOrder(id + "");
+	public Result orderOver(@PathVariable Long id, String employeeName, String employeeId) {
+		boolean res = orderService.confirmOrder(id + "", employeeName, employeeId);
 		return res ? Result.ok() : Result.error();
 	}
 

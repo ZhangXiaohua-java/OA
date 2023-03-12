@@ -133,10 +133,12 @@ public interface IPostOrderService extends IService<PostOrder> {
 
 
 	/**
-	 * @param orderId 订单号
+	 * @param orderId      订单号
+	 * @param employeeName 员工姓名
+	 * @param employeeId   员工id
 	 * @return 修改订单状态为已结束
 	 */
-	boolean confirmOrder(String orderId);
+	boolean confirmOrder(String orderId, String employeeName, String employeeId);
 
 
 	/**
@@ -144,6 +146,6 @@ public interface IPostOrderService extends IService<PostOrder> {
 	 * @return 根据订单号查询下单用户的手机号信息
 	 */
 	String queryPhoneNumByOrderId(String id);
-	
+
 
 }

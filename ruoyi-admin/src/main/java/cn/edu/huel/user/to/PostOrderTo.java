@@ -94,4 +94,8 @@ public class PostOrderTo {
 	private String posterPhone;
 
 
+	/* 详细的收货地址熊小妮 */
+	private String poiCode;
+
+
 }

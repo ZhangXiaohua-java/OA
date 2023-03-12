@@ -27,4 +27,6 @@ public interface AreaMapper extends BaseMapper<Area> {
 	 * @return 区域信息
 	 */
 	Area selectAreaByNames(@Param("regionName") String regionName, @Param("parentRegionName") String parentRegionName);
+
+	Area selectParentInfoByZipcode(@Param("zipCode") String zipCode);
 }

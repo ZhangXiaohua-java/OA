@@ -24,13 +24,19 @@ public interface RegionMapper extends BaseMapper<Region> {
 
 
 	/**
-	 *
 	 * @param parentRegionCode 低级市代码
 	 * @return 所有区县
 	 */
 	List<Region> selectChildCountsByParentRegionCode(@Param("parentRegionCode") String parentRegionCode);
 
 
+	List<Region> selectRegionCodeByZipCode(@Param("zipCode") String zipCode);
+
+	/**
+	 * @param collect 父区域id
+	 * @return 父区域信息
+	 */
+	List<Region> queryParentRegionInfo(@Param("collect") List<String> collect);
 
 }
 

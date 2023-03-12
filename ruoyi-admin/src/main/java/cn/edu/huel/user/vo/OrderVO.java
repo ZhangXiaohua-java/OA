@@ -85,4 +85,8 @@ public class OrderVO {
 	/* 区域代码,用来替换之前的zipcode邮编,使用邮编表示地域过于局限... */
 	private String countyCode;
 
+	/* 收货地址的统一编码信息,是比市区县更加详细的编号 */
+	private String poiCode;
+
+
 }

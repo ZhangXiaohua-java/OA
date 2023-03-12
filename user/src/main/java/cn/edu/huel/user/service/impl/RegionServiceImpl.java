@@ -132,7 +132,7 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region> impleme
 	 * @return 根据区域编码查询区域信息
 	 */
 	@Override
-	public Region queryRegionByZipCode(String code) {
+	public Region queryRegionByRegionCode(String code) {
 		LambdaQueryWrapper<Region> query = new LambdaQueryWrapper<>();
 		query.eq(Region::getRegionCode, code);
 		return this.baseMapper.selectOne(query);
@@ -148,6 +148,26 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region> impleme
 		LambdaQueryWrapper<Region> query = new LambdaQueryWrapper<>();
 		query.eq(Region::getRegionId, code);
 		return this.baseMapper.selectOne(query);
+	}
+
+
+	/**
+	 * @param zipCode 邮编
+	 * @return 区域信息
+	 */
+	@Override
+	public Region queryRegionByZipCode(String zipCode) {
+		List<Region> regions = this.baseMapper.selectRegionCodeByZipCode(zipCode);
+		if (regions != null && regions.size() == 1) {
+			return regions.get(0);
+		} else if (regions != null && regions.size() > 1) {
+			Area area = areaService.queryParentAreaInfo(zipCode);
+			List<Region> parents = this.baseMapper.queryParentRegionInfo(regions.
+					stream().map(e -> e.getRegionParentId()).collect(Collectors.toList()));
+			Region parent = parents.stream().filter(e -> e.getRegionName().equals(area.getName())).findAny().get();
+			return regions.stream().filter(e -> e.getRegionParentId().equals(parent.getRegionId())).findAny().get();
+		}
+		return null;
 	}
 	
 

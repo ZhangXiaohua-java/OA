@@ -23,6 +23,7 @@
         <result property="weight" column="weight"/>
         <result property="volume" column="volume"/>
         <result property="traceId" column="trace_id"/>
+        <result property="poiCode" column="poi_code"/>
     </resultMap>
 
     <sql id="selectPostOrderVo">
@@ -43,7 +44,8 @@
                status,
                weight,
                volume,
-               trace_id
+               trace_id,
+               poi_code
         from t_post_order
     </sql>
 

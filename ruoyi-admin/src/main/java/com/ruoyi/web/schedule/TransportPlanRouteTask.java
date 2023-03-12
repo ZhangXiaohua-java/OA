@@ -399,18 +399,10 @@ public class TransportPlanRouteTask {
 	}
 
 
-	public static void main(String[] args) {
-		String origin = "410225";
-		origin = origin.substring(0, origin.length() - 2).concat("00");
-		System.out.println(origin);
-	}
-
-
 	@Data
 	@AllArgsConstructor
 	public static class Node {
-
-
+		
 		private String orderId;
 
 		private String regionCode;

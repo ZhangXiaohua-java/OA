@@ -38,4 +38,16 @@ public class IBusinessDepartmentServiceImpl extends ServiceImpl<BusinessDepartme
 		return this.baseMapper.selectOne(query);
 	}
 
+	/**
+	 * @param lng 经度
+	 * @param lat 纬度
+	 * @return 查询指定经纬度10KM内的最近的营业部信息
+	 */
+	@Override
+	public BusinessDepartment queryBsByLngAndLat(String lng, String lat) {
+		List<BusinessDepartment> businessDepartments = this.baseMapper.selectBsByPosition(lng, lat);
+		return businessDepartments.get(0);
+	}
+	
+
 }

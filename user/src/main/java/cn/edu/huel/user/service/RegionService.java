@@ -66,7 +66,7 @@ public interface RegionService extends IService<Region> {
 	 * @param code 邮编
 	 * @return 根据区域编码查询区域信息
 	 */
-	Region queryRegionByZipCode(String code);
+	Region queryRegionByRegionCode(String code);
 
 
 	/**
@@ -74,6 +74,13 @@ public interface RegionService extends IService<Region> {
 	 * @return 查询上一级行政区信息
 	 */
 	Region findParentRegionInfo(String code);
+
+
+	/**
+	 * @param zipCode 邮编
+	 * @return 区域信息
+	 */
+	Region queryRegionByZipCode(String zipCode);
 	
 
 }

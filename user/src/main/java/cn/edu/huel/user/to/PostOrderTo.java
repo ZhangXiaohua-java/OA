@@ -94,4 +94,8 @@ public class PostOrderTo {
 	private String posterPhone;
 
 
+	/* 收件地址的POI编号 */
+	private String poiCode;
+
+
 }

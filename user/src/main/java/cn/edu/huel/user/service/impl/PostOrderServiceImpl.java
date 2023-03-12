@@ -362,19 +362,21 @@ public class PostOrderServiceImpl extends ServiceImpl<PostOrderMapper, PostOrder
 
 
 	/**
-	 * @param orderId 订单号
+	 * @param orderId      订单号
+	 * @param employeeName 员工姓名
+	 * @param employeeId   员工id
 	 * @return 修改订单状态为已结束
 	 */
 	@Override
-	public boolean confirmOrder(String orderId) {
+	public boolean confirmOrder(String orderId, String employeeName, String employeeId) {
 		LambdaUpdateWrapper<PostOrder> update = new LambdaUpdateWrapper<>();
 		update.eq(PostOrder::getId, orderId)
 				.ne(PostOrder::getStatus, OrderStatusEnum.Finished.getCode());
 		update.set(PostOrder::getStatus, OrderStatusEnum.Finished.getCode());
 		update.set(PostOrder::getUpdateTime, new Date());
+		update.set(PostOrder::getEmployeeName, employeeName + "," + employeeId);
 		return this.update(update);
 	}
-
 
 	/**
 	 * @param id 订单号

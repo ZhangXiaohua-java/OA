@@ -104,6 +104,11 @@ public class DispatchOrderInfo implements Serializable {
 	 */
 	private String sign;
 
+
+	/* 详细的收货地址信息 */
+	private String poiCode;
+
+
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
 }

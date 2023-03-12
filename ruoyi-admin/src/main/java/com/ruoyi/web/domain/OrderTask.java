@@ -105,4 +105,9 @@ public class OrderTask implements Serializable {
 
 	@TableField(exist = false)
 	private static final long serialVersionUID = 1L;
+
+	/* 收货地址编码信息 */
+	private String poiCode;
+
+
 }

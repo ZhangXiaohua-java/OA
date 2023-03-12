@@ -45,5 +45,23 @@
               (select region_id from sys_region where region_code = #{parentRegionCode})
     </select>
 
+    <select id="selectRegionCodeByZipCode" resultType="cn.edu.huel.user.domain.Region">
+        select region_id, region_name, region_short_name, region_code, region_parent_id, region_level
+        from sys_region
+        where region_name
+                  = (select name
+                     from t_area
+                     where zip_code = #{zipCode})
+    </select>
+
+    <select id="queryParentRegionInfo" resultType="cn.edu.huel.user.domain.Region">
+        select region_id, region_name, region_short_name, region_code, region_parent_id, region_level
+        from sys_region
+        where region_id in
+        <foreach collection="collect" open="(" close=")" separator="," item="ele">
+            #{ele}
+        </foreach>
+    </select>
+
 
 </mapper>

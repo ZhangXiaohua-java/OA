@@ -47,4 +47,16 @@ public class BusinessDepartmentController {
 	}
 
 
+	/**
+	 * @param lng 经度
+	 * @param lat 纬度
+	 * @return 10KM内最近的营业部的信息
+	 */
+	@GetMapping("/query/bs/position")
+	public Result queryBsByLngAndLat(@RequestParam String lng, @RequestParam String lat) {
+		BusinessDepartment bs = businessDepartmentService.queryBsByLngAndLat(lng, lat);
+		return Result.ok().put("data", bs);
+	}
+
+
 }

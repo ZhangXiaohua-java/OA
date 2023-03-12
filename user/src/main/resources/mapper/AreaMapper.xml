@@ -51,5 +51,24 @@
         where name = #{parentRegionName})
     </select>
 
+    <select id="selectParentInfoByZipcode" resultType="cn.edu.huel.user.domain.Area">
+        select id,
+               pid,
+               shortname,
+               name,
+               merger_name,
+               level,
+               pinyin,
+               code,
+               zip_code,
+               first,
+               lng,
+               lat
+        from t_area
+        where id = (select pid
+                    from t_area
+                    where zip_code = #{zipCode})
+    </select>
+
 
 </mapper>

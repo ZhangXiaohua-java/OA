@@ -69,26 +69,31 @@ public class OrderTraceController extends BaseController {
 			JSONArray array = (JSONArray) valueOps.get(key);
 			ArrayList<TransportTraceHistory> histories = new ArrayList<>();
 			// TODO 草拟吗,坑逼玩意
+			// 收件信息
+			TransportTraceHistory traceHistory = new TransportTraceHistory();
+			traceHistory.setReachTime(order.getOrderTime());
+			traceHistory.setPreDescInfo("营业厅已揽件");
+			traceHistory.setNextDescInfo("发往物流集散中心");
+			histories.add(traceHistory);
 			for (Object o : array) {
 				TransportTraceHistory history = JSON.parseObject(o.toString(), TransportTraceHistory.class);
 				Integer region = (Integer) JSONObject.parseObject(o.toString()).get("currentRegion");
 				history.setCurrentRegion(region);
 				histories.add(history);
 			}
-			histories.stream()
-					.forEach(e -> {
-						TransferFactory transferFactory = null;
-						Object o = valueOps.get(RedisConstant.TRANSFER_INFO_PREFIX + e.getCurrentRegion());
-						if (Objects.nonNull(o)) {
-							transferFactory = JSON.parseObject(o.toString(), TransferFactory.class);
-						}
-						e.setPreDescInfo(transferFactory == null ? "" : transferFactory.getName());
-						o = valueOps.get(RedisConstant.TRANSFER_INFO_PREFIX + e.getNextRegion());
-						if (Objects.nonNull(o)) {
-							transferFactory = JSON.parseObject(o.toString(), TransferFactory.class);
-						}
-						e.setNextDescInfo(transferFactory == null ? "" : transferFactory.getName());
-					});
+			histories.stream().forEach(e -> {
+				TransferFactory transferFactory = null;
+				Object o = valueOps.get(RedisConstant.TRANSFER_INFO_PREFIX + e.getCurrentRegion());
+				if (Objects.nonNull(o)) {
+					transferFactory = JSON.parseObject(o.toString(), TransferFactory.class);
+				}
+				e.setPreDescInfo(transferFactory == null ? "" : transferFactory.getName());
+				o = valueOps.get(RedisConstant.TRANSFER_INFO_PREFIX + e.getNextRegion());
+				if (Objects.nonNull(o)) {
+					transferFactory = JSON.parseObject(o.toString(), TransferFactory.class);
+				}
+				e.setNextDescInfo(transferFactory == null ? "" : transferFactory.getName());
+			});
 			return Result.ok().put("data", histories);
 		}
 		return Result.error("no data");

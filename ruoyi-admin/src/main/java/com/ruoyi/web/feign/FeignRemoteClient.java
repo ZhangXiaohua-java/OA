@@ -73,7 +73,7 @@ public interface FeignRemoteClient {
 	 * @return 更新订单状态为已结束
 	 */
 	@PostMapping("/order/confirm/dispatch/{id}")
-	Result orderOver(@PathVariable("id") Long id);
+	Result orderOver(@PathVariable("id") Long id, @RequestParam("employeeName") String employeeName, @RequestParam("employeeId") String employeeId);
 
 
 	/**
@@ -82,6 +82,10 @@ public interface FeignRemoteClient {
 	 */
 	@GetMapping("/order/query/phone/{id}")
 	Result queryPhoneNum(@PathVariable("id") String id);
+
+
+	@GetMapping("/bs/query/bs/position")
+	String queryMostNearlyBsInfo(@RequestParam("lng") String lng, @RequestParam("lat") String lat);
 
 
 }
